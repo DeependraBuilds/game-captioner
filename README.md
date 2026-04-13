@@ -2,7 +2,7 @@
 
 GameCaptioner is a gaming-focused content generation prototype built for creators who want faster multi-platform content workflows.
 
-##Live Demo: 
+Live Demo: 
 https://your-vercel-link
 
 ## What it does
