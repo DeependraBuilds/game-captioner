@@ -43,11 +43,19 @@ export function youtubeTitles(b: Brief, angle: EditorialAngle): [string,string,s
     curiosity=alt ? "Everything Changed in the Last Corner" : "One Corner Changed This Race";
     skill=drift ? (overtake ? "The Drift That Secured the Overtake" : "Why I Held the Drift Through the Corner")
       : "The Line That Made the Final Corner Count";
-  } else if(has(/\bboss\b/) && has(/\b(?:dodg|surviv|one hit|1 hp|barely any health|low health)\b/)) {
+  } else if(has(/\bboss\b/) && has(/\b(?:dodg\w*|surviv\w*|escap\w*|one hit|1 hp|barely any health|low health)\b/)) {
+    const dodge=has(/\b(?:dodg\w*|evad\w*|avoid\w*)\b/);
     const low=has(/\b(?:1 hp|one hp|one hit point|one hit|barely any health|low health)\b/);
-    searchable=alt ? "How I Survived This Close Boss Fight" : "One Dodge Saved This Boss Fight";
-    curiosity=low ? "One Hit Away from Losing the Boss Fight" : "This Boss Fight Came Down to One Dodge";
-    skill=has(/\b(?:finish|escape|defeat|won)\b/) ? "How I Survived the Hit and Finished the Fight" : "The Dodge That Kept My Run Alive";
+    const oneHit=has(/\b(?:1 hp|one hp|one hit point|one hit away)\b/);
+    const escaped=has(/\b(?:escap\w*|surviv\w*|made it out)\b/);
+    const defeated=has(/\b(?:defeat\w*|beat the boss|finished the fight|killed the boss)\b/);
+    searchable=dodge ? (alt?"I Dodged the Boss Attack":escaped?"One Dodge Let Me Escape the Boss Fight":"One Dodge Changed This Boss Encounter")
+      : "I Survived This Boss Encounter";
+    curiosity=oneHit?"One Hit Away from Losing This Boss Fight":
+      low?"Barely Any Health Left Against the Boss":"This Boss Fight Came Down to One Move";
+    skill=dodge&&escaped?"The Dodge That Let Me Escape the Boss":
+      dodge&&defeated?"The Dodge Before I Finished the Boss":
+      dodge?"The Boss Dodge That Made the Difference":"I Made It Through the Boss Encounter";
   } else if(has(/\b(?:fire|flames|burning|burned)\b/) && has(/\b(?:kitchen|cooking|dinner)\b/)) {
     searchable=alt?"Dinner Was a Disaster in the Kitchen":"I Tried Cooking Dinner. The Kitchen Caught Fire";
     curiosity="One Meal Turned into Total Chaos";

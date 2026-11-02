@@ -68,6 +68,13 @@ test("Forza social copy cannot invent a podium outcome or being second the entir
  assert.ok(inst);
  assert.doesNotMatch(inst.caption,/whole race/i);
 });
+test("Boss title choices avoid invented one-hit and fight-finish claims",()=>{
+ const item=createFallback(hades,"youtube");
+ assert.ok(item.titles.every(title=>!title.includes("One Hit Away")),item.titles.join(" / "));
+ assert.ok(item.titles.every(title=>!/Finished the Fight|Defeated the Boss|Beat the Boss/i.test(title)));
+ assert.ok(item.titles.some(title=>/Dodg|Escape/i.test(title)));
+ assert.ok(item.titles.every(title=>title.length<=100));
+});
 test("CSV export keeps column compatibility and normalizes caption tags",()=>{
  const src=readFileSync(new URL("../app/page.tsx",import.meta.url),"utf8");
  assert.match(src,/captionWithoutDuplicateTags\(item\.caption,item\.hashtags\)/);
