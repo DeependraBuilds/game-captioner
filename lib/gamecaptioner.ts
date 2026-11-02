@@ -161,13 +161,13 @@ function captionFor(b: Brief, platform: Platform, hooks: string[]): string {
     return clip(customLead + ".\n\nWatch this " + b.game + " " + b.contentType + ": " + moment + (extra ? "\n" + extra : "") + (b.tone === "tactical" ? "\nHere is the decision worth watching closely." : ""), 1700);
   }
   if (platform === "tiktok") {
-    return clip(customLead + ". " + moment + (extra ? " " + extra : ""), 360);
+    return clip(b.game + " | " + customLead + ". " + moment + (extra ? " " + extra : ""), 360);
   }
   if (platform === "instagram") {
-    return clip(customLead + ".\n\n" + moment + (extra ? "\n\n" + extra : "") + (b.tone === "funny" ? "\nI had to share this one." : ""), 1200);
+    return clip(b.game + " | " + customLead + ".\n\n" + moment + (extra ? "\n\n" + extra : "") + (b.tone === "funny" ? "\nI had to share this one." : ""), 1200);
   }
   if (platform === "facebook") {
-    return clip(audience + moment + (extra ? "\n\n" + extra : "") + "\n\n" + (b.tone === "tactical" ? "The interesting part is how the moment developed." : "One of those gaming moments I wanted to share."), 1500);
+    return clip(audience + "Playing " + b.game + ". " + moment + (extra ? "\n\n" + extra : "") + "\n\n" + (b.tone === "tactical" ? "The interesting part is how the moment developed." : "One of those gaming moments I wanted to share."), 1500);
   }
   const tagLength = hashtagsFor(b, platform).join(" ").length + 2;
   return clip(b.game + ": " + (b.variant % 2 ? customLead + ". " : "") + moment + (extra ? " " + extra : ""), 280 - tagLength);
