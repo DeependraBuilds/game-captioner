@@ -36,8 +36,8 @@ export function youtubeTitles(b: Brief, angle: EditorialAngle): [string,string,s
       curiosity=alt ? "Two Kills from One C4. Here Is the Setup" : "A Double C4 That Started with the Read";
       skill=rappels ? "Reading the Rappel Before the Double C4" : "The Setup That Made This C4 Double Work";
     }
-  } else if(has(/\b(?:drift\w*|overt(?:ook|ake|aking|aken)|last corner|final corner|finish line|pass(?:ed|ing)? (?:the )?(?:leader|opponent|car))\b/)) {
-    const overtake=has(/\b(?:overt(?:ook|ake|aking|aken)|pass(?:ed|ing)? (?:the )?(?:leader|opponent|car)|got past|went past)\b/);
+  } else if(has(/\b(?:drift\w*|overt(?:ook|ake|aking|aken)|last corner|final corner|finish line|pass(?:ed|ing)? (?:(?:the|a|an|another) )?(?:leader|opponent|car))\b/)) {
+    const overtake=has(/\b(?:overt(?:ook|ake|aking|aken)|pass(?:ed|ing)? (?:(?:the|a|an|another) )?(?:leader|opponent|car)|got past|went past)\b/);
     const drift=has(/\bdrift\w*\b/);
     searchable=overtake ? (drift ? "Last-Corner Drift Overtake" : "Late Pass Before the Finish") : "Final-Corner Drift";
     curiosity=overtake ? (alt ? "The Overtake Came at the Final Corner" : "One Corner Changed the Race Order") : (alt?"The Last Turn Was the Highlight":"The Final Corner Was the Moment");
