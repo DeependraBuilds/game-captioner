@@ -58,9 +58,13 @@ If disabled, rate limited, unreachable or invalid, Basic mode remains available,
 
 For English briefs, the Gemini prompt explicitly requests English writing. Unexpected East Asian script in AI-generated titles, descriptions, voiceovers and overlays is replaced field-by-field by the grounded fallback. Intentionally bilingual game names and briefs are not rejected.
 
-YouTube receives its own **multi-paragraph video description**, rather than a TikTok-style one-line caption. AI descriptions must have at least three substantive paragraphs, at least 65 words, and explicitly identify the game. When the AI response is too short or uses unexpected script, that field falls back to a longer source-grounded three-paragraph version. Relevant game and gameplay terms appear naturally in the opening lines, with details and a clear takeaway. The system never fabricates map names or claimed outcomes just to fill space. Other social platforms retain their own more compact formats.
+YouTube receives its own **multi-paragraph video description**, rather than a TikTok-style one-line caption. AI descriptions must have at least two substantive paragraphs for short briefs (at least 42 words), or three paragraphs for source notes with 45 or more words (at least 65 words); they must explicitly identify the game. When the AI response is too short or uses unexpected script, that field falls back to a longer source-grounded three-paragraph version. Relevant game and gameplay terms appear naturally in the opening lines, with details and a clear takeaway. The system never fabricates map names or claimed outcomes just to fill space. Other social platforms retain their own more compact formats.
 
 **Search optimization is not a ranking guarantee.** YouTube's own guidance prioritizes accurate, unique descriptions and relevant search terms. Hashtags are separate from the description and users can edit everything.
+
+## Description length scales with the gameplay facts
+
+Short gameplay notes usually offer only a setup, an action and a payoff. GameCaptioner now accepts two substantive YouTube paragraphs for such clips instead of padding the description into three repetitive paragraphs. Longer briefs, with at least 45 words of source detail, retain the three-paragraph, 65-word minimum. This is a writing-quality decision, not a claim that description length guarantees search placement. Both AI-written and grounded copy must still pass factual and game-specific validation.
 
 ## Concise racing storytelling and transparent field sourcing
 

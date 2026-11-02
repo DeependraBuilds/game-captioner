@@ -14,7 +14,7 @@ test("all tones preserve an explicitly confirmed overtake and avoid editorial me
   assert.ok(/\bdrift\b/i.test(caption));
   assert.ok(/\b(?:pass(?:ed)?|overtake|got past)\b/i.test(caption));
   assert.doesNotMatch(caption,/\b(?:notes|evidence|brief|source|was not specified|cannot assume)\b/i);
-  assert.equal(caption.split(/\n\s*\n/).length,3);
+  assert.equal(caption.split(/\n\s*\n/).length,2);
  }
  assert.equal(new Set(rendered).size,6);
  const funny=rendered[1],tactical=rendered[3];

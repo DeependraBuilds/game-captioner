@@ -123,6 +123,12 @@ export function adequateYouTubeDescription(text:string,b:Brief):boolean {
   const paragraphs=cleaned.split(/\n\s*\n/).map(x=>x.trim()).filter(Boolean);
   // Length and structure are quality checks, never claims of guaranteed ranking.
   // Some clips are sparse: avoid padding with invented events to hit a word count.
-  return paragraphs.length>=3 && paragraphs.every(paragraph=>words(paragraph)>=9) &&
-    words(cleaned)>=65 && cleaned.toLocaleLowerCase("en").includes(b.game.toLocaleLowerCase("en"));
+  const sourceWords=words(b.description+" "+b.notable);
+  // Sparse notes cannot legitimately sustain three 80+ word paragraphs.
+  // The structure scales with the available factual detail rather than a fixed SEO word quota.
+  const detailed=sourceWords>=45;
+  const minParagraphs=detailed?3:2;
+  const minWords=detailed?65:42;
+  return paragraphs.length>=minParagraphs && paragraphs.every(paragraph=>words(paragraph)>=10) &&
+    words(cleaned)>=minWords && cleaned.toLocaleLowerCase("en").includes(b.game.toLocaleLowerCase("en"));
 }

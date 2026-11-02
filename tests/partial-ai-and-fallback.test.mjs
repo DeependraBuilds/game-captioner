@@ -29,7 +29,7 @@ test("Forza last-turn fallback never truncates a sentence after held",()=>{
  for(const description of cases){
   const brief=parseBrief({game:"Forza Horizon 5",description,tone:"hype"});
   const caption=createFallback(brief,"youtube").caption;
-  assert.ok(caption.split(/\n\s*\n/).length===3,caption);
+  assert.ok(caption.split(/\n\s*\n/).length===2,caption);
   assert.ok(caption.includes("Forza Horizon 5"));
   assert.doesNotMatch(caption,/\bheld\.\s/);
   assert.ok(publishText(createFallback(brief,"youtube")).length>200);

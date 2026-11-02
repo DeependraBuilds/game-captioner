@@ -12,13 +12,13 @@ test("all six racing-tone fallbacks tell the actual drift and overtake without s
   const brief=make(tone);
   const caption=createFallback(brief,"youtube").caption;
   captions.push(caption);
-  assert.equal(caption.split(/\n\s*\n/).length,3,tone);
+  assert.equal(caption.split(/\n\s*\n/).length,2,tone);
   assert.match(caption,/Forza Horizon 5/,tone);
   assert.match(caption,/\bdrift\b/i,tone);
   assert.match(caption,/\b(?:pass(?:ed)?|overtake|overtook|got past|moved past)\b/i,tone);
   assert.doesNotMatch(caption,/\b(?:notes|evidence|description|brief|not assumed|was not specified|cannot assume)\b/i,tone);
   assert.doesNotMatch(caption,/\b(?:won the race|secured the win|finished first|race victory)\b/i,tone);
-  assert.ok(caption.split(/\s+/).length>=65,tone);
+  assert.ok(caption.split(/\s+/).length>=42,tone);
  }
  assert.equal(new Set(captions).size,tones.length);
  assert.notEqual(captions[0].split(/\n\s*\n/)[1],captions[1].split(/\n\s*\n/)[1]);

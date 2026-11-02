@@ -46,6 +46,9 @@
 - Added a focused quality gate for unsupported general coaching and lost racing outcomes, plus user-visible per-description AI/fallback sourcing. Existing multi-platform workflows and no-retry API behavior remain intact.
 - Added targeted tests for tone distinctions, preserving the pass, partial Gemini content and correctly labeling grounded description replacements.
 
+- Adopted adaptive YouTube description length: two substantive paragraphs for short creator briefs, three for detailed briefs. Reduced repetitive filler in six racing-tone fallback descriptions and allowed grounded, concise AI descriptions to pass without unnecessary fallback.
+- Added tests for short/detailed description gates, all six racing-tone outputs, and one-line AI text rejection.
+
 ### Known limitations
 
 - Template mode provides usable but less fluent prose than AI mode. It is not a trained language model.

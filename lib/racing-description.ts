@@ -19,43 +19,39 @@ export function racingDescription(b:Brief):string|null{
   if(!f.finalCorner || !f.drift)return null;
   const game=b.game;
   const target=/\bleader\b/i.test(b.description+" "+b.notable)?"the leader":"another car";
-  const result=f.passed?(f.nearFinish?"passed "+target+" before the finish":"passed "+target):"held the drift through the turn";
-  const start=f.second?"in second place":"approaching the last turn";
-  const end=f.won?" I went on to win the race.":"";
-  // The factual beats are fixed. Tone changes the telling, not the results or driving technique.
-  const descriptions:Record<Brief["tone"],[string,string,string]>={
+  const finish=f.nearFinish?"just before the finish":"near the end";
+  const entering=f.second?"in second place":"at the final turn";
+  const pass=f.passed?"passed "+target+" "+finish:"made the last turn count";
+  const confirmedWin=f.won?" The race finished with a win.":"";
+  // For a brief containing only a few facts, two purposeful paragraphs are
+  // more informative than stretching the same result into three paragraphs.
+  const pairs:Record<Brief["tone"],[string,string]>={
     hype:[
-      "Final corner. "+(f.second?"Second place. ":"")+"In "+game+", I held the drift through the last turn and "+result+".",
-      "The move happened right at the end of the race. I stayed with the drift through the corner"+(f.passed?" and came away with the overtake":" until the turn was behind me")+". That is the payoff of this clip.",
-      "One corner, one decisive moment"+(f.passed?", and a late pass":"")+". This "+game+" highlight comes down to making that last turn count."+end,
+      "Final corner. "+(f.second?"Second place. ":"")+"In "+game+", I held the drift through the last turn and "+pass+". That's the moment this race clip builds toward.",
+      "The turn came at the end, "+(f.passed?"but the pass changed the position right before the line.":"and the drift became the focus of the clip.")+" One committed move and an ending worth clipping."+confirmedWin,
     ],
     funny:[
-      "Apparently the last corner in "+game+" still had something to say. I arrived "+(f.second?"in second place":"at the final turn")+", held the drift, and "+result+".",
-      "The corner was doing its normal job of being a corner, and then "+(f.passed?"it became an overtake":"the drift became the whole highlight")+". Good timing for the final turn to get interesting.",
-      "That is my kind of race ending: "+(f.passed?"a pass just before the line":"a drift through the last corner")+". The finish was close enough to make it worth clipping."+end,
+      "The final corner in "+game+" apparently had one more job. I arrived "+entering+", held a drift, and "+pass+". Not a bad time for the turn to get interesting.",
+      "A corner went from being just a corner to the whole highlight. "+(f.passed?"The leader was ahead going in, and the pass happened before the finish.":"The drift itself was the reason to keep the clip.")+" I'll take that ending."+confirmedWin,
     ],
     competitive:[
-      "In "+game+", I entered the final corner "+start+", held the drift, and "+result+".",
-      "The decisive part was the position change at the last turn. I committed to the drift and "+(f.passed?"completed the overtake near the finish":"carried the move through the corner")+".",
-      "This is the key sequence in the highlight: a late corner, a committed drift"+(f.passed?", and a successful pass":"")+". The outcome is the move shown on screen."+end,
+      "In "+game+", I entered the final corner "+entering+" and held the drift through the turn. I "+pass+". The decisive move came when the finish was already close.",
+      "The important moment is "+(f.passed?"the late change in position":"the held drift through the turn")+". The corner entry set up the move, and the payoff came at the end of the clip."+confirmedWin,
     ],
     tactical:[
-      "In "+game+", I entered the final corner "+start+", held the drift, and "+result+".",
-      "The overtake"+(f.passed?" came after I committed to the drift through the last turn":" opportunity was the held drift through the last turn")+". The timing of that commitment is what makes the corner the key moment.",
-      "One late decision changed the position near the line. That is what makes this "+game+" racing highlight worth examining, beyond the drift itself."+end,
+      "In "+game+", I entered the final corner "+entering+", held the drift through the turn, and "+pass+". The position changed at the last corner of the race.",
+      "The timing of the commitment mattered because the turn came immediately before the finish. I stayed with the drift through the corner, "+(f.passed?"then completed the pass near the line":"making the corner itself the central moment")+". That sequence is the highlight."+confirmedWin,
     ],
     casual:[
-      "My "+game+" race came down to the last corner. I arrived "+(f.second?"in second place":"at the turn")+", held a drift through it, and "+result+".",
-      "I kept the drift going through that final corner, and "+(f.passed?"the pass happened just before the finish":"that final turn became the highlight")+". It is exactly the kind of moment I like clipping.",
-      "One late turn made the difference in this race. "+(f.passed?"Getting past "+target+" that close to the line was the best part.":"Holding that drift through the corner was the best part.")+end,
+      "This "+game+" race came down to the final corner. I arrived "+entering+", held a drift through the turn, and "+pass+". It was the part of the race I wanted to share.",
+      "I like clips where one move makes the difference. Here it was the last-corner drift"+(f.passed?" followed by the pass near the finish":" right at the end")+". Nothing else needed to make that a good moment."+confirmedWin,
     ],
     cinematic:[
-      "One corner left in "+game+". I came into the final turn "+start+", held a drift, and "+result+".",
-      "The last turn was the setting for the entire move. The drift carried through the corner"+(f.passed?", and the pass followed before the finish":" as the finish approached")+".",
-      "That final corner became the turning point of the clip. "+(f.passed?"The position changed just before the line.":"The drift was the moment that stayed with me.")+end,
+      "One last corner in "+game+". I went in "+entering+", held the drift through the turn, and "+pass+". The finish was already in sight.",
+      "The final turn "+(f.passed?"changed the position before the line":"held the focus of the clip")+". The race had one more moment to deliver, and that was the one the clip captured."+confirmedWin,
     ],
   };
-  return descriptions[b.tone].map(s=>s.trim()).join("\n\n");
+  return pairs[b.tone].map(paragraph=>paragraph.trim()).join("\n\n");
 }
 
 export function racingCaptionIsGrounded(caption:string,b:Brief):boolean{
