@@ -96,7 +96,7 @@ export function basicYouTubeDescription(b:Brief,a:EditorialAngle):string {
       funny:"The final corner in "+b.game+" seemed like a good place to change the order. I "+action+" and "+result+".",
       competitive:"In this "+b.game+" race, I "+action+" and "+result+". The pass started with choosing the right moment to commit.",
       tactical:"In "+b.game+", I "+action+" and "+result+". The corner timing is what made this racing clip worth breaking down.",
-      casual:"This "+b.game+" clip is from the final corner. I "+action+" and "+result+". That was the moment I wanted to share.",
+      casual:"This "+b.game+" race clip is from the final corner. I "+action+" and "+result+". That was the moment I wanted to share.",
       cinematic:"The final corner was the turning point in this "+b.game+" race. I "+action+" and "+result+".",
     };
     const explanation={
