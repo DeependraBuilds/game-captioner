@@ -73,9 +73,10 @@ export function toneTitle(title:string,b:Brief,index:number):string {
     hype:"The Payoff: ",funny:"So This Happened: ",competitive:"The Execution: ",
     tactical:"How ",cinematic:"The Decisive Moment: ",
   };
-  const lead=prefixes[b.tone];
   const [body,game]=title.split(/\s+\|\s+(?=[^|]+$)/);
-  if(!game || /^how\b/i.test(body) && b.tone==="tactical" || title.length+lead.length>100) return title;
+  if(!game)return title;
+  const lead=b.tone==="tactical" && /^how\b/i.test(body) ? "Tactical: " : prefixes[b.tone];
+  if(title.length+lead.length>100)return title;
   return lead+body+" | "+game;
 }
 
