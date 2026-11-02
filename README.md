@@ -62,6 +62,12 @@ YouTube receives its own **multi-paragraph video description**, rather than a Ti
 
 **Search optimization is not a ranking guarantee.** YouTube's own guidance prioritizes accurate, unique descriptions and relevant search terms. Hashtags are separate from the description and users can edit everything.
 
+## Partial Gemini output and safer Basic fallback
+
+A Gemini response can omit optional arrays or output an incomplete draft even when the returned JSON is valid. GameCaptioner now preserves useful generated titles, captions, voiceovers and overlays while filling absent fields from its local draft. For a single selected platform it also accepts a direct draft object without an extra platform wrapper, and it joins multiple non-thinking text parts before parsing. The application makes **one provider request** per generation attempt; it does not silently retry a rejected response. Invalid JSON, missing usable content and upstream failures still trigger Basic mode with a visible warning.
+
+The Forza/last-corner fallback now covers more drift phrasing without truncating gameplay notes into broken fragments. Editorial filtering and user review remain necessary: a syntactically valid AI response does not establish factual accuracy.
+
 ## Writing tone and editorial guardrails
 
 The selected writing tone now drives **all fields**: titles, SEO descriptions, social captions, voiceovers, overlays and optional calls to action. Six named tone profiles distinguish hype, funny, competitive, tactical, casual and cinematic writing, with clear instructions for what to avoid. Changing tone after generating drafts does not spend another AI request without permission; the UI prompts creators to generate again to apply the new tone.

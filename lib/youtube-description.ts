@@ -117,6 +117,29 @@ export function basicYouTubeDescription(b:Brief,a:EditorialAngle):string {
     };
     return [opening[b.tone],explanation[b.tone],ending[b.tone]].join("\n\n");
   }
+  if(has(/\b(?:drift\w*|slide|slid)\b/) && has(/\b(?:last|final)\s+(?:turn|corner)\b/)) {
+    const outcome=has(/\b(?:pass(?:ed|ing)?|overtak\w*|took the lead|went past)\b/)
+      ? "The move happened near the finish, but the clip notes do not establish the overall race result."
+      : "The drift itself is the moment described, without an assumed pass or race result.";
+    const setups={
+      hype:"The last corner of "+b.game+" gave me a chance to commit to a drift. This was the moment the clip built toward.",
+      funny:"I got to the final corner in "+b.game+" and committed to a drift. No need to invent the rest of the race to make that worth watching.",
+      competitive:"In "+b.game+", I took a drift through the final corner. The relevant decision is where the move happened.",
+      tactical:"The key moment in this "+b.game+" racing clip is the drift through the final corner. That is the action the notes establish.",
+      casual:"This "+b.game+" clip is about a drift through the last corner. That's the moment I wanted to share.",
+      cinematic:"The last corner arrived in "+b.game+". I held the drift through the turn, with the finish ahead.",
+    };
+    const details={
+      hype:"The final turn is where the action happens. The clip focuses on the held drift rather than extra techniques or a claimed victory.",
+      funny:"The corner came, the drift happened, and I didn't need a whole racing lecture to explain it.",
+      competitive:"The note confirms the drift and its placement on the track. No throttle technique or finishing position is inferred.",
+      tactical:"The described action is holding the drift at the last corner. Any additional driving inputs or positions need separate evidence.",
+      casual:"I held the drift through that last turn, and that's the part of the race I clipped.",
+      cinematic:"One move through the corner gives this short clip its focus. What follows is only what the creator actually described.",
+    };
+    return [setups[b.tone],details[b.tone],
+      "For "+b.game+" viewers, the focus is the final-corner drift. "+outcome].join("\n\n");
+  }
   const intro=b.game+" "+b.contentType+" gameplay: "+finalSentence(cap(a.hook))
     +" This clip focuses on "+(has(/\bboss\b/)?"a close boss encounter."
       :has(/\b(?:drift|corner|racing|overtak)\b/)?"the critical racing moment."
@@ -126,8 +149,12 @@ export function basicYouTubeDescription(b:Brief,a:EditorialAngle):string {
       :"one specific gameplay moment.");
   const facts=splitSentences(b.description);
   const first=facts[0]||a.setup;
-  const excerpt=first.split(/\s+/).slice(0,8).join(" ");
-  const middle=finalSentence(excerpt)+" "+a.setup+(b.notable?" "+finalSentence(b.notable):"");
+  // Never append a period to an arbitrary first-eight-word fragment such as
+  // "I entered the last corner in second, held."
+  const clearSource=first.split(/(?<=[.!?])\s+/)[0].trim();
+  const distinctFact=clearSource.length<=170 ? clearSource : "";
+  const middle=(distinctFact && !a.setup.toLowerCase().includes(distinctFact.toLowerCase())
+    ? finalSentence(distinctFact)+" " : "")+a.setup+(b.notable?" "+finalSentence(b.notable):"");
   const endings={
     hype:"The payoff is what makes this "+b.game+" moment stand out, but the setup is worth noticing too. "+a.payoff+" That's the moment the clip is really about.",
     funny:"The result might look unexpected, but the setup is the part worth noticing in "+b.game+". "+a.payoff+" Sometimes that's all the explanation a clip needs.",

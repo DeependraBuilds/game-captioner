@@ -89,19 +89,27 @@ export function publishText(content: Content): string {
 }
 export function validContent(value: unknown, b: Brief, p: Platform): Content | null {
   if (!object(value)) return null;
-  const titles = value.titles, hashtags = value.hashtags, onscreen = value.onscreen, carousel = value.carousel;
-  const caption = value.caption, voiceover = value.voiceover, cta = value.cta;
-  const stringArray = (arr: unknown, max: number, limit: number): arr is string[] =>
-    Array.isArray(arr) && arr.length <= max && arr.every(s => typeof s === "string" && s.length <= limit);
-  if (!stringArray(titles, 3, 140) || titles.length !== 3 || !stringArray(hashtags, 5, 60) ||
-      !stringArray(onscreen, 5, 80) || !stringArray(carousel, 7, 180) ||
-      typeof caption !== "string" || typeof voiceover !== "string" || typeof cta !== "string" ||
-      caption.length > 1800 || voiceover.length > 900 || cta.length > 160) return null;
-  // Hashtags are deliberately generated from source facts, not model guesses.
-  // The editor remains free to adjust them after generation.
-  void hashtags;
-  const cleanTags = hashtagsFor(b,p);
-  const backup = createFallback(b,p);
+  const backup=createFallback(b,p);
+  // Model providers sometimes omit an unused optional property. Keep valid fields
+  // and supply grounded defaults rather than rejecting the entire AI response.
+  const rawTitles = Array.isArray(value.titles) && value.titles.length<=3
+    ? value.titles.filter((x):x is string=>typeof x==="string" && x.trim().length>0 && x.length<=140)
+    : [];
+  const titles = [0,1,2].map(i=>rawTitles[i]||backup.titles[i]);
+  const caption=typeof value.caption==="string" && value.caption.trim() && value.caption.length<=1800
+    ? value.caption : backup.caption;
+  const voiceover=typeof value.voiceover==="string" && value.voiceover.trim() && value.voiceover.length<=900
+    ? value.voiceover : backup.voiceover;
+  const cta=typeof value.cta==="string" && value.cta.length<=160 ? value.cta : backup.cta;
+  const stringArray=(x:unknown,limit:number,maxLength:number):x is string[] =>
+    Array.isArray(x) && x.length<=limit && x.every(y=>typeof y==="string" && y.length<=maxLength);
+  const onscreen=stringArray(value.onscreen,5,80) && value.onscreen.length>0
+    ? value.onscreen : backup.onscreen;
+  const carousel=stringArray(value.carousel,7,180)?value.carousel:backup.carousel;
+  // The AI must have contributed at least one meaningful content field.
+  if(!rawTitles.length && caption===backup.caption && voiceover===backup.voiceover &&
+      onscreen===backup.onscreen) return null;
+  const cleanTags=hashtagsFor(b,p);
   const unsafeVoiceover=(text:string):boolean =>
     /\b(?:like and subscribe|subscribe to (?:my|the|this) channel|follow (?:for|me for) more|check out (?:my|the) channel)\b/i.test(text);
   const safeField=(value:string, fallback:string, kind:"general"|"voiceover"="general"):string =>

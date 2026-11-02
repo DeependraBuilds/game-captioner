@@ -34,6 +34,10 @@
 - Added regression coverage for a real Forza Hype description that previously made unsupported momentum, control and track-difficulty claims. Expanded grounded validation of paraphrased driving-technique assertions and generalized guarantees, and refined Hype, Funny and Tactical voice profiles.
 - Added copy-preview tests for all six tones to ensure non-empty captions and hashtags flow into the publish preview from the generated draft state.
 
+- Reduced all-or-nothing Gemini failures by accepting valid partial drafts, optional missing metadata, multipart candidate text, and single-platform unwrapped JSON while retaining grounded defaults without additional provider calls.
+- Corrected Basic racing fallback for varied drift and last-corner notes and stopped extracting arbitrary eight-word fragments ending in incomplete sentences.
+- Added regression tests for incomplete but usable AI replies, multipart output, no-usable-data responses and fallback copy formatting.
+
 ### Known limitations
 
 - Template mode provides usable but less fluent prose than AI mode. It is not a trained language model.

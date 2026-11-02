@@ -169,21 +169,31 @@ async function withGemini(b: Brief, client: string, section: Section | null, adj
       try { data = await res.json(); }
       catch { return diagnostic("invalid_response",model,{phase}); }
       if (typeof data !== "object" || !data) return diagnostic("invalid_response",model,{phase:"response_shape"});
-      const candidates = (data as {candidates?:Array<{content?:{parts?:Array<{text?:string}>}}>} ).candidates;
-      const raw = candidates?.[0]?.content?.parts?.[0]?.text;
-      if (!raw || raw.length > 40000) return diagnostic("invalid_response",model,{phase:"candidate_text"});
-      phase = "candidate_json";
-      let parsed: unknown;
-      try {parsed = JSON.parse(raw);}
-      catch {return diagnostic("invalid_response",model,{phase});}
-      if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return diagnostic("invalid_response",model,{phase:"candidate_shape"});
-      const output: Partial<Record<Platform, Content>> = {};
-      for (const platform of b.platforms) {
-        const value = (parsed as Record<string, unknown>)[platform];
-        const safe = validContent(value, b, platform);
-        if (safe) output[platform] = safe;
+      const candidates=(data as {candidates?:Array<{
+        finishReason?:string;
+        content?:{parts?:Array<{text?:string;thought?:boolean}>};
+      }>}).candidates;
+      const selected=candidates?.[0];
+      const raw=(selected?.content?.parts||[])
+        .filter(part=>!part.thought && typeof part.text==="string")
+        .map(part=>part.text).join("").trim();
+      if(!raw || raw.length>40000)
+        return diagnostic("invalid_response",model,{phase:selected?.finishReason==="MAX_TOKENS"?"max_tokens":"candidate_text"});
+      phase="candidate_json";
+      let parsed:unknown;
+      try{parsed=JSON.parse(raw);}
+      catch{return diagnostic("invalid_response",model,{phase:selected?.finishReason==="MAX_TOKENS"?"max_tokens":phase});}
+      if(!parsed || typeof parsed!=="object" || Array.isArray(parsed))
+        return diagnostic("invalid_response",model,{phase:"candidate_shape"});
+      const payload=parsed as Record<string,unknown>;
+      const output:Partial<Record<Platform,Content>>={};
+      for(const platform of b.platforms){
+        // For one-platform jobs, also accept a draft without an outer platform key.
+        const candidate=payload[platform]??(b.platforms.length===1?payload:undefined);
+        const safe=validContent(candidate,b,platform);
+        if(safe)output[platform]=safe;
       }
-      return Object.keys(output).length ? { output } : diagnostic("invalid_response",model,{phase:"draft_validation"});
+      return Object.keys(output).length?{output}:diagnostic("invalid_response",model,{phase:"draft_validation"});
     } finally { clearTimeout(timeout); }
   } catch (caught) {
     const reason = caught instanceof Error && (caught.name === "AbortError" || caught.name === "TimeoutError") ? "timeout" : "network_error";
