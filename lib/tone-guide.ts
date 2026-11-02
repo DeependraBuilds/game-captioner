@@ -68,7 +68,7 @@ export function toneNarrative(b: Brief, a: Narrative): Narrative {
 }
 
 export function toneTitle(title:string,b:Brief,index:number):string {
-  if(b.tone==="casual" || index!==0) return title;
+  if(b.tone==="casual" || index!==0 || (b.tone==="hype" && /\b(?:drift\w*|last corner|final corner|overtak\w*|overtook)\b/i.test(b.description+" "+b.notable))) return title;
   const prefixes:Record<Exclude<Tone,"casual">,string>={
     hype:"The Payoff: ",funny:"So This Happened: ",competitive:"The Execution: ",
     tactical:"How ",cinematic:"The Decisive Moment: ",

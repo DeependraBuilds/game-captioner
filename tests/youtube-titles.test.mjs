@@ -4,7 +4,7 @@ import { parseBrief, createFallback } from "../lib/gamecaptioner.ts";
 
 const cases = [
  {game:"Rainbow Six Siege",description:"I have the clips where i get the double C4 kills with Mira first as I read the rappel on the window as they break the Castle barricade and get 2 kills, then in another round I time the C4 in the map which is Chalet and get another double.",expect:["C4","C4","Rappel"]},
- {game:"Forza Horizon 5",description:"I held a drift through the last corner and passed the leader before the finish.",expect:["lead","corner","drift"]},
+ {game:"Forza Horizon 5",description:"I held a drift through the last corner and passed the leader before the finish.",expect:["overtake","corner","drift"]},
  {game:"Elden Ring",description:"I dodged the boss at one hit point and survived to finish the fight.",expect:["dodge","hit","finish"]},
  {game:"Stardew Valley",description:"I finally finished my greenhouse after working the farm.",expect:["greenhouse","farm","greenhouse"]},
  {game:"The Sims 4",description:"My character tried cooking dinner and burned down the kitchen with a fire.",expect:["kitchen","meal","cooking"]},

@@ -13,8 +13,8 @@ export function bossDescription(b:Brief):string|null {
  const pairs:Record<Brief["tone"],[string,string]>={
  hype:["That boss encounter in "+b.game+" got intense. "+pressure+event+".",outcome+" The moment came down to one decision, and that's the highlight."],
  funny:["Apparently the boss in "+b.game+" had other plans. "+pressure+event+".","At least the decision to "+(dodge?"move out of the way":"keep going")+" worked out. "+outcome],
- tactical:["In "+b.game+", "+pressure+event+".","The action was "+(dodge?"avoiding the attack":"getting through the encounter")+". "+outcome+" That's the sequence shown in this clip."],
- competitive:["In "+b.game+", "+pressure+event+".","The response to the boss was the turning point. "+outcome+" This is the result of that decision."],
+ tactical:["In "+b.game+", "+(low?"I had barely any health left when ":"")+event+".",(dodge?"The dodge was the key decision":"Getting through the encounter was the key moment")+(low?" with little health left to spare":"")+". "+(escape?"I escaped after that attack, and that is the result this clip captures.":finish?"The fight ended afterward, with that response shaping the exchange.":"The clip focuses on my response to the boss attack.")],
+ competitive:["In "+b.game+", "+(low?"I had barely any health left when ":"")+event+".","The response to the boss was the turning point. "+outcome+" This is the result of that decision."],
  casual:["I had a close boss moment in "+b.game+". "+pressure+event+".","That was the part I wanted to share. "+outcome+" It made for a good clip."],
  cinematic:["One boss encounter in "+b.game+" came down to this. "+pressure+event+".","The moment changed with that response. "+outcome+" That's where the clip ends."]
  };

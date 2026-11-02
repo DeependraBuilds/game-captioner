@@ -36,12 +36,12 @@ export function youtubeTitles(b: Brief, angle: EditorialAngle): [string,string,s
       curiosity=alt ? "Two Kills from One C4. Here Is the Setup" : "A Double C4 That Started with the Read";
       skill=rappels ? "Reading the Rappel Before the Double C4" : "The Setup That Made This C4 Double Work";
     }
-  } else if(has(/\b(?:drift|overtak|last corner|finish line|passed the leader)\b/)) {
-    const overtake=has(/\b(?:overtak|pass(?:ed|ing)? the leader|passed the leader)\b/);
-    const drift=has(/\bdrift\b/);
-    searchable=overtake ? "How I Took the Lead in the Final Corner" : "The Final Corner Made the Race";
-    curiosity=alt ? "Everything Changed in the Last Corner" : "One Corner Changed This Race";
-    skill=drift ? (overtake ? "The Drift That Secured the Overtake" : "Why I Held the Drift Through the Corner")
+  } else if(has(/\b(?:drift\w*|overt(?:ook|ake|aking|aken)|last corner|final corner|finish line|pass(?:ed|ing)? (?:the )?(?:leader|opponent|car))\b/)) {
+    const overtake=has(/\b(?:overt(?:ook|ake|aking|aken)|pass(?:ed|ing)? (?:the )?(?:leader|opponent|car)|got past|went past)\b/);
+    const drift=has(/\bdrift\w*\b/);
+    searchable=overtake ? (drift ? "Last-Corner Drift Overtake" : "Late Pass Before the Finish") : "Final-Corner Drift";
+    curiosity=overtake ? (alt ? "The Overtake Came at the Final Corner" : "One Corner Changed the Race Order") : (alt?"The Last Turn Was the Highlight":"The Final Corner Was the Moment");
+    skill=drift ? (overtake ? "Holding the Drift for the Late Pass" : "Holding the Drift Through the Last Corner")
       : "The Line That Made the Final Corner Count";
   } else if(has(/\bboss\b/) && has(/\b(?:dodg\w*|surviv\w*|escap\w*|one hit|1 hp|barely any health|low health)\b/)) {
     const dodge=has(/\b(?:dodg\w*|evad\w*|avoid\w*)\b/);
