@@ -47,9 +47,9 @@ export function youtubeTitles(b: Brief, angle: EditorialAngle): [string,string,s
     const dodge=has(/\b(?:dodg\w*|evad\w*|avoid\w*)\b/);
     const low=has(/\b(?:1 hp|one hp|one hit point|one hit|barely any health|low health)\b/);
     const oneHit=has(/\b(?:1 hp|one hp|one hit point|one hit away)\b/);
-    const escaped=has(/\b(?:escap\w*|surviv\w*|made it out)\b/);
+    const escaped=has(/\b(?:escap\w*|made it out|got out)\b/);
     const defeated=has(/\b(?:defeat\w*|beat the boss|finished the fight|killed the boss)\b/);
-    searchable=dodge ? (alt?"I Dodged the Boss Attack":escaped?"One Dodge Let Me Escape the Boss Fight":"One Dodge Changed This Boss Encounter")
+    searchable=dodge ? (alt?"I Dodged the Boss Attack":escaped?"One Dodge Let Me Escape the Boss Fight":defeated?"One Dodge Helped Me Finish the Boss Fight":"One Dodge Changed This Boss Encounter")
       : "I Survived This Boss Encounter";
     curiosity=oneHit?"One Hit Away from Losing This Boss Fight":
       low?"Barely Any Health Left Against the Boss":"This Boss Fight Came Down to One Move";
