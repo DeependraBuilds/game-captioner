@@ -407,6 +407,7 @@ export function findGames(input: string, limit = 12): GameChoice[] {
   const query = normalizeGameSearch(input);
   const max = Math.min(30, Math.max(0, Math.floor(limit)));
   if (!query) {
+    if (input.trim()) return [];
     return FEATURED_GAMES.slice(0, max).map(name => GAME_CATALOG.find(game => game.title === name)!);
   }
   return GAME_CATALOG
