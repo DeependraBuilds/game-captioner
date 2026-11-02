@@ -31,6 +31,9 @@
 - Tightened editorial quality checks after real Hype, Funny and Forza examples: unsupported universal claims, invented timer tactics, apex/racing lines, throttle control, race positions and other tactical assertions now trigger validation.
 - YouTube AI descriptions require three substantive paragraphs; otherwise the grounded format is used. Added a voiceover CTA check, extra anti-jargon guidance and source-specific regression tests for six failure scenarios.
 
+- Added regression coverage for a real Forza Hype description that previously made unsupported momentum, control and track-difficulty claims. Expanded grounded validation of paraphrased driving-technique assertions and generalized guarantees, and refined Hype, Funny and Tactical voice profiles.
+- Added copy-preview tests for all six tones to ensure non-empty captions and hashtags flow into the publish preview from the generated draft state.
+
 ### Known limitations
 
 - Template mode provides usable but less fluent prose than AI mode. It is not a trained language model.
