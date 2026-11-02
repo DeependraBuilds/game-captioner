@@ -49,7 +49,10 @@ form>input,form>textarea{margin-bottom:20px}
 .field-pair textarea{min-height:74px}
 .tone-field,.platform-field{border:0;padding:0;margin:0 0 20px;min-width:0}
 .tone-field legend,.platform-field legend{padding:0;margin-bottom:12px}
-.tone-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.tone-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;align-items:stretch}
+.tone-hint{display:block;position:static;clear:both;margin:12px 0 0;padding:0;color:#a9bdd6;font-size:11px;line-height:1.6;overflow-wrap:anywhere}
+.tone-hint strong{color:#d9ebff;font-weight:800}
+.tone-field .tone-button{width:100%;min-height:42px;white-space:normal;line-height:1.35}
 .tone-button,.platform-choice{border:1px solid #30425b;background:#0d1a2d;color:#a9bad2;border-radius:8px;padding:11px 6px;font-weight:700;font-size:11px;min-height:42px}
 .tone-button:hover,.platform-choice:hover{border-color:#5993c5;color:#fff}
 .tone-button.is-selected,.platform-choice.is-selected{background:#123758;border-color:var(--blue);color:#d8f0ff;box-shadow:inset 0 0 0 1px #4ca9f320}
@@ -82,7 +85,7 @@ form>input,form>textarea{margin-bottom:20px}
 .examples span{flex-basis:100%;font-size:9px;letter-spacing:1.8px;color:#91a7c5;font-weight:800;margin-bottom:3px}
 .examples button{background:#162840;border:1px solid #315072;color:#a7d8fa;border-radius:6px;padding:9px 12px;font-size:11px}
 .results-toolbar{padding:18px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.result-meta{display:flex;align-items:center;gap:9px;font-size:11px;font-weight:700;color:#c7d8ed}
+.result-meta{display:flex;align-items:center;flex-wrap:wrap;gap:9px;font-size:11px;font-weight:700;color:#c7d8ed}
 .mode-label{background:#19304a;color:#99cfff;border-radius:50px;padding:5px 9px;font-weight:600}
 .export-actions{display:flex;flex-wrap:wrap;gap:7px}
 .result-tabs{display:flex;gap:6px;padding:0 23px 15px;flex-wrap:wrap;border-bottom:1px solid var(--line)}
@@ -130,3 +133,9 @@ form>input,form>textarea{margin-bottom:20px}
 .game-selector-no-results{font-size:12px;line-height:1.5;color:#bfcee3;padding:15px;overflow-wrap:anywhere}
 .game-selector-menu-footer{position:sticky;bottom:0;background:#14253b;font-size:10px;color:#b1c7e1;line-height:1.5;padding:10px 13px;border-top:1px solid #31506d}
 @media (max-width:650px){.game-selector-option{align-items:flex-start;flex-direction:column;gap:4px}.game-selector-category{max-width:none;text-align:left}.game-selector-menu{max-height:290px}}
+
+/* Writing tone help sits below the entire button grid without the negative margin used for input counters. */
+.tone-change-notice{border:1px solid #456184;border-radius:8px;background:#162942;color:#c7d9f1;font-size:11px;line-height:1.6;margin:12px 0 20px;padding:11px 12px}
+.tone-change-notice strong{color:#f1f7ff;text-transform:capitalize}
+.draft-tone{font-size:11px;color:#bfd8ef;white-space:nowrap}
+@media(max-width:380px){.tone-button{padding:10px 4px;font-size:10px}.tone-hint{font-size:11px}}

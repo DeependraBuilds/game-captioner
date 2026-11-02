@@ -31,12 +31,48 @@ export function basicYouTubeDescription(b:Brief,a:EditorialAngle):string {
     };
     const intro=repeat ? toneIntro[b.tone]
       : "A double C4 kill in "+b.game+location+" that comes down to the read before the detonation. This gameplay highlight shows why timing matters.";
-    const detail=[
-      has(/\b(?:rappel|rappelling|window)\b/) ? "I anticipate where the attackers are positioned as they rappel toward the window." : "I focus on the attacker movement before committing to the detonation.",
-      has(/\bcastle\b/) && has(/\bbarricade\b/) ? "The first C4 is timed around the Castle barricade being opened." : "",
-      repeat ? "A later round offers another opportunity to make the same kind of read and secure a second double." : "",
-      has(/\bkitchen\b/) && has(/\bmaster bedroom\b/) ? "The second play connects Kitchen and the Master Bedroom window." : "",
-    ].filter(Boolean).join(" ");
+    const rappel=has(/\b(?:rappel|rappelling|window)\b/);
+    const barricade=has(/\bcastle\b/) && has(/\bbarricade\b/);
+    const secondPlace=has(/\bkitchen\b/) && has(/\bmaster bedroom\b/);
+    const middleByTone={
+      hype:[
+        rappel?"The first chance came as attackers worked the window rappel.":"",
+        barricade?"I timed the C4 around the Castle barricade breaking.":"",
+        repeat?"Another round brought another double C4.":"",
+        secondPlace?"That second setup was from Kitchen toward the Master Bedroom window.":"",
+      ],
+      funny:[
+        rappel?"The attackers picked the window for their rappel. I picked the timing for the C4.":"",
+        barricade?"The Castle barricade made the first window read especially useful.":"",
+        repeat?"One round later, the C4 had another appointment.":"",
+        secondPlace?"The follow-up involved Kitchen and the Master Bedroom window.":"",
+      ],
+      competitive:[
+        rappel?"I read the rappel before committing to the first detonation.":"",
+        barricade?"The Castle-barricaded window gave me a timing cue for the first double.":"",
+        repeat?"The next round gave me another double from a separate read.":"",
+        secondPlace?"That second angle came from Kitchen toward Master Bedroom.":"",
+      ],
+      tactical:[
+        rappel?"First, I read where the attackers would be on the window rappel.":"",
+        barricade?"I timed the Nitro Cell for the Castle barricade opening.":"",
+        repeat?"In a separate round, I used another window read to set up the second double C4.":"",
+        secondPlace?"From Kitchen, I targeted the Master Bedroom window.":"",
+      ],
+      casual:[
+        rappel?"I watched the attackers approach the window and waited for my C4 timing.":"",
+        barricade?"The first one was around the Castle barricade.":"",
+        repeat?"Later I got another double, using a similar read in a different round.":"",
+        secondPlace?"That second setup was between Kitchen and the Master Bedroom window.":"",
+      ],
+      cinematic:[
+        rappel?"The window read came first. The detonation came only when the attackers reached the rappel.":"",
+        barricade?"The Castle barricade framed the first moment.":"",
+        repeat?"Then another round brought a second double C4.":"",
+        secondPlace?"Kitchen and the Master Bedroom window formed the second scene.":"",
+      ],
+    };
+    const detail=middleByTone[b.tone].filter(Boolean).join(" ");
     const toneEnd={
       hype:"The C4 double kills are the payoff, but the real highlight is the split-second timing. Reading the movement before detonating is what makes these "+b.game+" clips exciting.",
       funny:"The C4 did the loud part. The useful part was reading where the attackers would be. In "+b.game+", that difference makes this worth watching twice.",
@@ -47,6 +83,39 @@ export function basicYouTubeDescription(b:Brief,a:EditorialAngle):string {
     };
     const end=toneEnd[b.tone];
     return [intro,detail,end].join("\n\n");
+  }
+  // Use a factual, genre-specific fallback only when the brief actually mentions the closing corner.
+  const finalCorner=has(/\b(?:last|final) corner\b/);
+  if(finalCorner && has(/\b(?:pass(?:ed|ing)? the leader|overtak\w*)\b/)) {
+    const drift=has(/\bdrift\b/);
+    const passed=has(/\b(?:pass(?:ed|ing)? the leader|overtak\w*)\b/);
+    const action=drift?"held a drift through the final corner":"made the move in the final corner";
+    const result=passed?"passed the leader before the finish":"made the last corner count";
+    const opening={
+      hype:"Final corner, one big move in "+b.game+"! I "+action+" and "+result+". The ending was all about that timing.",
+      funny:"The final corner in "+b.game+" seemed like a good place to change the order. I "+action+" and "+result+".",
+      competitive:"In this "+b.game+" race, I "+action+" and "+result+". The pass started with choosing the right moment to commit.",
+      tactical:"In "+b.game+", I "+action+" and "+result+". The corner timing is what made this racing clip worth breaking down.",
+      casual:"This "+b.game+" clip is from the final corner. I "+action+" and "+result+". That was the moment I wanted to share.",
+      cinematic:"The final corner was the turning point in this "+b.game+" race. I "+action+" and "+result+".",
+    };
+    const explanation={
+      hype:"Everything happened in the closing stretch. The drift and the overtake were the actual highlights, and there was no room to add another move after the corner.",
+      funny:"It wasn't a complicated plan: get through the corner and see if the move worked. This time the last turn was where the race got interesting.",
+      competitive:"The move came through the corner. I kept the focus on the overtake that actually happened rather than treating one pass as proof of the final race result.",
+      tactical:"The decision was the corner entry and how long I held the move. The important result in the footage is the pass before the line, not an assumed race victory.",
+      casual:"I stayed with the move through that last turn. What makes the clip fun is getting the pass at the end after lining up the corner.",
+      cinematic:"The closing stretch brought the decision into focus. The last turn gave the move its shape, and the pass was the moment it paid off.",
+    };
+    const ending={
+      hype:"The payoff here is "+b.game+" racing at its most direct: one corner, one decisive move, and the leader in reach right before the finish.",
+      funny:"Sometimes all a "+b.game+" clip needs is a final corner and an overtake. This one had both, and that is plenty to talk about.",
+      competitive:"For "+b.game+" players, the useful detail is the timing of the final-corner move. The overtake is the result shown in this clip.",
+      tactical:"The takeaway for "+b.game+" racing is the choice of when to commit through the corner. The clip shows the overtake, which is the result worth analyzing.",
+      casual:"That's what stood out to me in "+b.game+". I liked the last-corner move and the fact that it turned into a pass near the line.",
+      cinematic:"The corner came first, and the pass came just before the finish. That short sequence is what makes the "+b.game+" moment memorable.",
+    };
+    return [opening[b.tone],explanation[b.tone],ending[b.tone]].join("\n\n");
   }
   const intro=b.game+" "+b.contentType+" gameplay: "+finalSentence(cap(a.hook))
     +" This clip focuses on "+(has(/\bboss\b/)?"a close boss encounter."

@@ -11,7 +11,10 @@ const sharedRules:ClaimRule[]=[
  {output:/\b(?:every single round|every round|all rounds)\b/i,evidence:/\b(?:every (?:single )?round|all rounds)\b/i,label:"all rounds"},
  {output:/\b(?:world record|personal best|new record|record time)\b/i,evidence:/\b(?:record|personal best|pb)\b/i,label:"record"},
  {output:/\b(?:flawless victory|perfect game|no damage taken)\b/i,evidence:/\b(?:flawless|perfect game|no damage|without taking damage)\b/i,label:"perfect result"},
- {output:/\b(?:won the match|secured the win|match victory|we won|I won)\b/i,evidence:/\b(?:won|win|victory|beat|defeated)\b/i,label:"victory"},
+ {output:/\b(?:won the match|secured the win|match victory|we won|I won|last.second victory|winning one|race victory|took the win|claimed victory|finished first|first.place finish)\b/i,evidence:/\b(?:won|win|victory|beat|defeated|finished first|won the race)\b/i,label:"victory"},
+ {output:/\b(?:throttle control|throttle management|throttle inputs?)\b/i,evidence:/\b(?:throttle|accelerat|gas pedal|power control)\b/i,label:"throttle technique"},
+ {output:/\b(?:runner.up finish|finished second|came second)\b/i,evidence:/\b(?:runner.up|finished second|came second|second.place finish)\b/i,label:"race finishing position"},
+ {output:/\b(?:the final straight|last straight)\b/i,evidence:/\b(?:straight|straightaway)\b/i,label:"race straight"},
  {output:/\b(?:without (?:ever )?exposing (?:myself|yourself)|without (?:a )?(?:direct )?gunfight)\b/i,evidence:/\b(?:without exposing|without (?:a )?gunfight|no gunfight|never saw)\b/i,label:"unseen engagement"},
 ];
 const siegeTerms=["Mira","Deimos","Castle","Valkyrie","Chalet","Oregon","Clubhouse","Coastline","Kafe","Bank","Border","Kitchen","Master Bedroom"];

@@ -80,6 +80,7 @@ export default function Home() {
   const [notable,setNotable] = useState("");
   const [audience,setAudience] = useState("");
   const [tone,setTone] = useState<Tone>("casual");
+  const [draftTone,setDraftTone] = useState<Tone | null>(null);
   const [contentType,setContentType] = useState<ContentType>("highlight");
   const [duration,setDuration] = useState<10|20|30>(20);
   const [platforms,setPlatforms] = useState<Platform[]>(["youtube"]);
@@ -118,8 +119,8 @@ export default function Home() {
       });
       const data = await response.json() as GenerateResponse & { error?:string };
       if (!response.ok || !data.results) throw new Error(data.error || "Generation failed.");
-      setDrafts(data.results);setActive(wanted[0]);setMode(data.mode);
-      setNotice(data.mode === "creative" ? "AI-assisted creative draft ready. Review for accuracy before posting." : (data.warning || "Basic mode: editorial AI was unavailable."));
+      setDrafts(data.results);setActive(wanted[0]);setMode(data.mode);setDraftTone(tone);
+      setNotice(data.mode === "creative" ? "AI-assisted draft ready. Some sections may use grounded copy when AI adds unsupported details. Review before posting." : (data.warning || "Basic mode: editorial AI was unavailable."));
       setVariant(v => (v + 1) % 100);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not generate content.");
@@ -208,8 +209,9 @@ export default function Home() {
               <div className="tone-grid">{TONES.map(t=>
                 <button type="button" key={t} className={"tone-button" + (tone===t?" is-selected":"")} aria-pressed={tone===t} onClick={()=>{setTone(t);if(hasResults)setNotice("Writing tone changed. Generate again to apply it across the titles, captions, voiceovers and overlays.");}}>{toneLabels[t]}</button>
               )}</div>
-              <div className="input-hint"><span>{toneHelp[tone]} Affects titles, descriptions, voiceovers and on-screen text.</span></div>
+              <p className="tone-hint" aria-live="polite"><strong>Selected: {tone.charAt(0).toUpperCase()+tone.slice(1)}.</strong> {toneHelp[tone]} Applies to titles, descriptions, voiceovers and overlays after generation.</p>
             </fieldset>
+            {hasResults && draftTone && draftTone !== tone && <p className="tone-change-notice" role="status">These drafts use <strong>{draftTone}</strong> tone. Select Generate again to apply <strong>{tone}</strong> tone to the output.</p>}
             <fieldset className="platform-field"><legend className="field-label">Where are you posting?</legend>
               <div className="platform-choices">{PLATFORMS.map(p=>
                 <button type="button" key={p} aria-pressed={platforms.includes(p)} className={"platform-choice"+(platforms.includes(p)?" is-selected":"")} onClick={()=>togglePlatform(p)}>
@@ -249,7 +251,7 @@ export default function Home() {
           </div> : <>
             <div className="results-toolbar">
               <div className="result-meta"><span className="live-dot"/>{selectedResults.length} platform draft{selectedResults.length===1?"":"s"}
-                <span className="mode-label">{mode==="creative"?"AI-assisted":"Basic mode"}</span></div>
+                <span className="mode-label">{mode==="creative"?"AI-assisted":"Basic mode"}</span><span className="draft-tone">Draft tone: {draftTone ? draftTone.charAt(0).toUpperCase()+draftTone.slice(1) : "Unknown"}</span></div>
               <DownloadButtons drafts={drafts} game={game}/>
             </div>
             <div className="result-tabs" role="tablist" aria-label="Generated platforms">
