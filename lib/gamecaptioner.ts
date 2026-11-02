@@ -1,5 +1,7 @@
 import { writeBasicDraft } from "./editorial.ts";
 import { adequateYouTubeDescription, hasUnexpectedEastAsianScript } from "./youtube-description.ts";
+import { relevantHashtags } from "./hashtag-strategy.ts";
+import { unsupportedClaims, groundedSentences } from "./grounding.ts";
 
 export const PLATFORMS = ["youtube", "tiktok", "instagram", "facebook", "twitter"] as const;
 export type Platform = (typeof PLATFORMS)[number];
@@ -76,20 +78,8 @@ export function clip(text: string, limit: number): string {
   const boundary = slice.lastIndexOf(" ");
   return (boundary > limit * 0.55 ? slice.slice(0, boundary) : slice).trimEnd().replace(/[,:;\-]+$/, "") + "…";
 }
-function hashtag(game: string): string {
-  return game.replace(/[^a-zA-Z0-9]/g, "").slice(0, 40);
-}
 export function hashtagsFor(brief: Brief, platform: Platform): string[] {
-  const game = hashtag(brief.game);
-  const typeTag: Record<ContentType,string> = {
-    highlight:"Gameplay",tutorial:"GamingTips",montage:"GamingMontage",
-    story:"GamingStories",review:"GameReview",carousel:"GamingTips",
-  };
-  const tags=[game?"#"+game:"","#Gaming","#"+typeTag[brief.contentType]];
-  if(platform==="youtube")tags.push("#Shorts");
-  if(platform==="tiktok")tags.push("#GamingTikTok");
-  if(platform==="instagram"||platform==="facebook")tags.push("#GamingReels");
-  return [...new Set(tags.filter(Boolean))].slice(0,platform==="twitter"?2:4);
+  return relevantHashtags(brief,platform);
 }
 export function createFallback(b:Brief,p:Platform):Content {
   return writeBasicDraft(b,p,hashtagsFor(b,p));
@@ -107,24 +97,30 @@ export function validContent(value: unknown, b: Brief, p: Platform): Content | n
       !stringArray(onscreen, 5, 80) || !stringArray(carousel, 7, 180) ||
       typeof caption !== "string" || typeof voiceover !== "string" || typeof cta !== "string" ||
       caption.length > 1800 || voiceover.length > 900 || cta.length > 160) return null;
-  const cleanTags = hashtags.filter(s => /^#[A-Za-z0-9_]+$/.test(s)).slice(0, p === "twitter" ? 2 : 4);
+  // Hashtags are deliberately generated from source facts, not model guesses.
+  // The editor remains free to adjust them after generation.
+  void hashtags;
+  const cleanTags = hashtagsFor(b,p);
   const backup = createFallback(b,p);
-  const checkedTitles = titles.map((title,index) =>
-    hasUnexpectedEastAsianScript(title,b) ? backup.titles[index] : title
-  );
+  const safeField=(value:string, fallback:string):string =>
+    hasUnexpectedEastAsianScript(value,b) || unsupportedClaims(value,b).length ? fallback : value.trim();
+  const checkedTitles = titles.map((title,index) => safeField(title,backup.titles[index]));
+  let cleanedCaption=hasUnexpectedEastAsianScript(caption,b)?backup.caption:groundedSentences(caption,b);
+  // Light de-jargon pass. Do not invent information or flatten the chosen tone.
+  cleanedCaption=cleanedCaption.replace(/\butilizing\b/gi,"using")
+    .replace(/\babsolute precision\b/gi,"careful timing")
+    .replace(/\breliable pressure\b/gi,"pressure");
   const checkedCaption = p === "youtube"
-    ? (adequateYouTubeDescription(caption,b) ? caption.trim() : backup.caption)
-    : (hasUnexpectedEastAsianScript(caption,b) ? backup.caption : caption.trim());
+    ? (adequateYouTubeDescription(cleanedCaption,b) ? cleanedCaption : backup.caption)
+    : (cleanedCaption.trim() || backup.caption);
   const prepared: Content = {
     titles: checkedTitles.map(t => clip(t.trim(), p === "youtube" ? 100 : 110)),
     caption: checkedCaption,
     hashtags: cleanTags.length ? cleanTags : hashtagsFor(b, p),
-    voiceover: hasUnexpectedEastAsianScript(voiceover,b) ? backup.voiceover : voiceover.trim(),
-    onscreen: onscreen.map((s,i) => hasUnexpectedEastAsianScript(s,b)
-      ? (backup.onscreen[i]||"") : clip(s.trim(), 45)),
-    cta: b.includeCTA ? (hasUnexpectedEastAsianScript(cta,b) ? backup.cta : cta.trim()) : "",
-    carousel: b.includeCarousel ? carousel.map((s,i) => hasUnexpectedEastAsianScript(s,b)
-      ? (backup.carousel[i]||"") : s) : [],
+    voiceover: safeField(voiceover,backup.voiceover),
+    onscreen: onscreen.map((line,i) => clip(safeField(line,backup.onscreen[i]||""),45)),
+    cta: b.includeCTA ? safeField(cta,backup.cta) : "",
+    carousel: b.includeCarousel ? carousel.map((line,i) => safeField(line,backup.carousel[i]||"")) : [],
   };
   if (p === "twitter" && publishText(prepared).length > 280) {
     prepared.caption = clip(prepared.caption, 280 - prepared.hashtags.join(" ").length - 2);

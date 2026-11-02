@@ -21,8 +21,15 @@ export function basicYouTubeDescription(b:Brief,a:EditorialAngle):string {
     const map=b.description.match(/\bmap (?:which is|called|named)\s+([A-Z][A-Za-z0-9-]+)/)?.[1]
       || b.description.match(/\bon\s+(Chalet|Oregon|Clubhouse|Coastline|Kafe|Bank|Border)\b/i)?.[1];
     const location=map?" on "+map:"";
-    const intro=repeat
-      ? "Two double C4 kills in "+b.game+location+", across separate rounds. Both plays come down to reading attacker movement and getting the Nitro Cell timing right."
+    const toneIntro={
+      hype:"Two C4 doubles in "+b.game+location+"! Different rounds, but the timing made both plays count.",
+      funny:"In "+b.game+location+", apparently one double C4 wasn't enough. The second round brought another chance to get the timing right.",
+      competitive:"In "+b.game+location+", two double C4 kills came from reading the attackers and committing at the right moment.",
+      tactical:"In "+b.game+location+", two double C4 kills show how a good rappel read becomes a well-timed Nitro Cell.",
+      casual:"Two double C4 kills in "+b.game+location+", across separate rounds. Both came down to reading the window and timing the Nitro Cell.",
+      cinematic:"Two rounds. Two double C4 kills in "+b.game+location+". The window read set up each detonation.",
+    };
+    const intro=repeat ? toneIntro[b.tone]
       : "A double C4 kill in "+b.game+location+" that comes down to the read before the detonation. This gameplay highlight shows why timing matters.";
     const detail=[
       has(/\b(?:rappel|rappelling|window)\b/) ? "I anticipate where the attackers are positioned as they rappel toward the window." : "I focus on the attacker movement before committing to the detonation.",
@@ -30,7 +37,15 @@ export function basicYouTubeDescription(b:Brief,a:EditorialAngle):string {
       repeat ? "A later round offers another opportunity to make the same kind of read and secure a second double." : "",
       has(/\bkitchen\b/) && has(/\bmaster bedroom\b/) ? "The second play connects Kitchen and the Master Bedroom window." : "",
     ].filter(Boolean).join(" ");
-    const end="The takeaway from this "+b.game+" clip is the decision-making: positioning, reading the rappel"+(repeat?", and repeating the timing in a different round":"")+". The C4 kills are the payoff, but understanding where the attackers have to be is what makes the play work.";
+    const toneEnd={
+      hype:"The C4 double kills are the payoff, but the real highlight is the split-second timing. Reading the movement before detonating is what makes these "+b.game+" clips exciting.",
+      funny:"The C4 did the loud part. The useful part was reading where the attackers would be. In "+b.game+", that difference makes this worth watching twice.",
+      competitive:"The result matters, but the repeatable skill is getting the read and the timing right. That's the part of this "+b.game+" gameplay worth learning from.",
+      tactical:"The key takeaway for "+b.game+" players is simple: read the attackers first, then time the detonation. Map knowledge matters because it helps turn information into a clean C4 play.",
+      casual:"What I like about these "+b.game+" clips is that the big moments came from the setup. The C4 doubles look flashy, but the timing is what made them happen.",
+      cinematic:"The explosions last a moment. The read comes before them. That's what connects these two "+b.game+" rounds and makes the payoff land.",
+    };
+    const end=toneEnd[b.tone];
     return [intro,detail,end].join("\n\n");
   }
   const intro=b.game+" "+b.contentType+" gameplay: "+finalSentence(cap(a.hook))
@@ -44,8 +59,15 @@ export function basicYouTubeDescription(b:Brief,a:EditorialAngle):string {
   const first=facts[0]||a.setup;
   const excerpt=first.split(/\s+/).slice(0,8).join(" ");
   const middle=finalSentence(excerpt)+" "+a.setup+(b.notable?" "+finalSentence(b.notable):"");
-  const final="What makes this "+b.game+" moment worth sharing is the decision and the outcome. "+a.payoff
-    +" The focus is on the gameplay itself, not unrelated highlights or invented details.";
+  const endings={
+    hype:"The payoff is what makes this "+b.game+" moment stand out, but the setup is worth noticing too. "+a.payoff+" That's the moment the clip is really about.",
+    funny:"The result might look unexpected, but the setup is the part worth noticing in "+b.game+". "+a.payoff+" Sometimes that's all the explanation a clip needs.",
+    competitive:"For "+b.game+" players, the useful detail is the decision and its outcome. "+a.payoff+" The point is to understand what actually worked.",
+    tactical:"Look at the setup, the choice and the consequence in this "+b.game+" clip. "+a.payoff+" Those details are more useful than a generic gameplay montage.",
+    casual:"That's the part I wanted to share from "+b.game+". "+a.payoff+" It's the kind of gameplay moment that's more interesting when you notice the setup.",
+    cinematic:"The moment is brief, but the decision behind it gives this "+b.game+" clip its shape. "+a.payoff+" That's what makes the ending worth a second look.",
+  };
+  const final=endings[b.tone];
   return [intro,middle,final].join("\n\n");
 }
 export function isEnglishBrief(b:Brief):boolean {

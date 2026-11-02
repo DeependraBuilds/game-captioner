@@ -62,6 +62,14 @@ YouTube receives its own **multi-paragraph video description**, rather than a Ti
 
 **Search optimization is not a ranking guarantee.** YouTube's own guidance prioritizes accurate, unique descriptions and relevant search terms. Hashtags are separate from the description and users can edit everything.
 
+## Writing tone and editorial guardrails
+
+The selected writing tone now drives **all fields**: titles, SEO descriptions, social captions, voiceovers, overlays and optional calls to action. Six named tone profiles distinguish hype, funny, competitive, tactical, casual and cinematic writing, with clear instructions for what to avoid. Changing tone after generating drafts does not spend another AI request without permission; the UI prompts creators to generate again to apply the new tone.
+
+The server provides Gemini with an explicit style contract, content-type purpose, and evidence reminder extracted from the gameplay notes. A bounded deterministic factual guard strips unsupported sentences or replaces unsafe sections: for example, named Rainbow Six Siege operators and maps, audio cues, floor destruction, team comms, ranked claims, unsupported multi-kill totals, and invented victories. It cannot detect every factual error in arbitrary games. Review remains essential.
+
+Hashtags are curated from the selected game and recognizable mechanics in the source notes, favoring game identifiers and specific moment tags over generic #Gaming or #Gameplay. AI hashtags are replaced with this verified set, which users can freely edit in the workspace. For YouTube, titles retain the game suffix when shortened and descriptions preserve multi-paragraph structure.
+
 ## Editorial quality and testing
 
 The creative prompt asks the model to act as a gaming editor instead of a description paraphraser. It emphasizes the angle and payoff, grounded facts, platform differentiation and natural spoken voiceovers. Automated tests include a long real-world-style multi-round C4 example and non-shooter genres. No API key is bundled; AI quality requires a configured server-side Gemini key. Without it, the app clearly labels the results **Basic mode**.

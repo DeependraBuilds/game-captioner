@@ -24,6 +24,10 @@
 - Added a dedicated multi-paragraph YouTube description with game-focused opening, clip detail, and takeaway, replacing one-line AI replies with a grounded longer fallback.
 - Enforced English-language output for English-language briefs; replaces unexpected East Asian script at field level while preserving multilingual source material.
 
+- Enforced six distinct writing-tone contracts across YouTube descriptions, captions, voiceovers, titles, overlays and optional CTA, including style guidance in the form and in the Gemini prompt.
+- Added bounded evidence guardrails against invented audio cues, ranked play, map/operator names, floor destruction, results, and kill totals; filters unsupported clauses and falls back to grounded copy when needed.
+- Replaced generic AI hashtags with game- and gameplay-specific verified hashtag sets across five platforms. YouTube shortening preserves searchable context and paragraph structure.
+
 ### Known limitations
 
 - Template mode provides usable but less fluent prose than AI mode. It is not a trained language model.

@@ -113,10 +113,18 @@ export function writeBasicDraft(b:Brief,p:Platform,baseTags:string[]):Content {
   for(const line of voiceLines){const count=line.split(/\s+/).length;if(!vo.length||words+count<=voiceMax+3){vo.push(line);words+=count;}}
   const titleOnScreen=cut(a.hook.replace(/[.!?]+$/,""),40);
   const carousel=b.includeCarousel?[titles[0],"The setup: "+a.setup,"The key moment: "+(a.extra||a.payoff),"The takeaway: "+a.payoff]:[];
+  const ctaByTone={
+    hype:"More "+b.game+" moments? Check out the channel.",
+    funny:"More "+b.game+" moments like this? Stick around.",
+    competitive:"Follow for more "+b.game+" decisions and highlights.",
+    tactical:"More "+b.game+" reads and gameplay on the channel.",
+    casual:"More "+b.game+" clips on the channel.",
+    cinematic:"More "+b.game+" stories on the channel.",
+  };
   return {
     titles,caption:captions[p],hashtags:baseTags,
     voiceover:vo.join(" "),onscreen:[titleOnScreen,a.overlay,cut(a.payoff,45)],
-    cta:!b.includeCTA?"":p==="youtube"?"More "+b.game+" clips on the channel.":p==="twitter"?"Follow for more gameplay.":"Follow for more "+b.game+" moments.",
+    cta:!b.includeCTA?"":p==="twitter"?"Follow for more "+b.game+".":ctaByTone[b.tone],
     carousel,
   };
 }

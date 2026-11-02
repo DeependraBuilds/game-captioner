@@ -24,14 +24,35 @@ function withinLimit(map: Map<string, {count:number;until:number}>, key: string,
   entry.count++;
   return entry.count <= max;
 }
-function adjust(content: Content, section: Section | null, adjustment: Adjustment | null): Content {
+function shortenYouTubeDescription(value:string):string {
+  const blocks=value.split(/\n\s*\n/).map(s=>s.trim()).filter(Boolean);
+  if(blocks.length<2)return value;
+  const count=(s:string)=>s.trim().split(/\s+/).filter(Boolean).length;
+  if(count(value)<=80)return value;
+  // Remove a final sentence from a longer paragraph only if the resulting copy
+  // retains useful substance, the game context, and paragraph structure.
+  for(let i=blocks.length-1;i>=0;i--){
+    const sentences=blocks[i].split(/(?<=[.!?])\s+/);
+    if(sentences.length<2)continue;
+    const next=blocks.slice();
+    next[i]=sentences.slice(0,-1).join(" ");
+    if(next[i] && count(next.join(" "))>=65)return next.join("\n\n");
+  }
+  return value;
+}
+function adjust(content: Content, section: Section | null, adjustment: Adjustment | null, platform:Platform): Content {
   if (!section || !adjustment) return content;
   const copy = { ...content, titles:[...content.titles], hashtags:[...content.hashtags], onscreen:[...content.onscreen], carousel:[...content.carousel] };
   if (adjustment === "remove-cta") { copy.cta = ""; return copy; }
   if (adjustment !== "shorter") return copy;
-  if (section === "caption") copy.caption = clip(copy.caption, Math.max(90, Math.floor(copy.caption.length * 0.65)));
+  if (section === "caption") copy.caption = platform==="youtube" ? shortenYouTubeDescription(copy.caption) : clip(copy.caption, Math.max(90, Math.floor(copy.caption.length * 0.65)));
   if (section === "voiceover") copy.voiceover = clip(copy.voiceover, Math.max(60, Math.floor(copy.voiceover.length * 0.7)));
-  if (section === "titles") copy.titles = copy.titles.map(t => clip(t, Math.max(35, Math.floor(t.length * 0.7))));
+  if (section === "titles") copy.titles = copy.titles.map(t => {
+    if(platform!=="youtube")return clip(t,Math.max(35,Math.floor(t.length*.7)));
+    const cut=t.lastIndexOf(" | ");
+    if(cut<0)return clip(t,70);
+    return clip(t.slice(0,cut),Math.max(30,Math.floor(cut*.8)))+t.slice(cut);
+  });
   if (section === "onscreen") copy.onscreen = copy.onscreen.map(t => clip(t, 25));
   if (section === "cta") copy.cta = clip(copy.cta, 45);
   if (section === "carousel") copy.carousel = copy.carousel.map(t => clip(t, 90));
@@ -179,7 +200,7 @@ export async function respond(request: Request, all: boolean): Promise<NextRespo
     const aiAttempt = await withGemini(modified, ip, section as Section | null, adjustment as Adjustment | null, existingText);
     const ai = aiAttempt.output;
     if (ai) for (const p of PLATFORMS) if (ai[p]) draft[p] = ai[p];
-    if (section) for (const p of modified.platforms) draft[p] = adjust(draft[p]!, section as Section, adjustment as Adjustment | null);
+    if (section) for (const p of modified.platforms) draft[p] = adjust(draft[p]!, section as Section, adjustment as Adjustment | null,p);
     return NextResponse.json({
       results: draft,
       mode: ai ? "creative" : "offline",

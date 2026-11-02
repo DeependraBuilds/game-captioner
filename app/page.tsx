@@ -11,6 +11,14 @@ import {
 } from "@/lib/gamecaptioner";
 
 type Drafts = Partial<Record<Platform, Content>>;
+const toneHelp: Record<Tone,string> = {
+  hype:"Energetic, payoff-first, with excitement earned by the clip.",
+  funny:"Light situational humor without inventing events.",
+  competitive:"Confident, skill-focused writing without unsupported win claims.",
+  tactical:"Explain the read, positioning and timing from the supplied facts.",
+  casual:"Conversational and natural, like talking to a teammate.",
+  cinematic:"Measured tension and pacing, grounded in what happened.",
+};
 const toneLabels: Record<Tone,string> = {
   hype: "⚡ Hype", funny: "☻ Funny", competitive: "◎ Competitive",
   tactical: "⌖ Tactical", casual: "◌ Casual", cinematic: "✧ Cinematic",
@@ -198,8 +206,9 @@ export default function Home() {
             </div>
             <fieldset className="tone-field"><legend className="field-label">Writing tone</legend>
               <div className="tone-grid">{TONES.map(t=>
-                <button type="button" key={t} className={"tone-button" + (tone===t?" is-selected":"")} aria-pressed={tone===t} onClick={()=>setTone(t)}>{toneLabels[t]}</button>
+                <button type="button" key={t} className={"tone-button" + (tone===t?" is-selected":"")} aria-pressed={tone===t} onClick={()=>{setTone(t);if(hasResults)setNotice("Writing tone changed. Generate again to apply it across the titles, captions, voiceovers and overlays.");}}>{toneLabels[t]}</button>
               )}</div>
+              <div className="input-hint"><span>{toneHelp[tone]} Affects titles, descriptions, voiceovers and on-screen text.</span></div>
             </fieldset>
             <fieldset className="platform-field"><legend className="field-label">Where are you posting?</legend>
               <div className="platform-choices">{PLATFORMS.map(p=>
@@ -257,7 +266,7 @@ export default function Home() {
                   const text = Array.isArray(value) ? value.join("\n") : value;
                   const uid = p+"-"+s;
                   return <div className="editor" key={s}>
-                    <div className="editor-head"><label htmlFor={uid}>{sectionLabels[s]}</label>
+                    <div className="editor-head"><label htmlFor={uid}>{s==="caption" && p==="youtube"?"YouTube description":sectionLabels[s]}</label>
                       <div className="editor-tools">
                         <button type="button" onClick={()=>void copy(text,sectionLabels[s])} title={"Copy "+s}>Copy</button>
                         <button type="button" disabled={Boolean(refining)} onClick={()=>void refine(p,s,"regenerate")} title={"Regenerate "+s}>{refining===uid?"Working…":"↻ Rewrite"}</button>
