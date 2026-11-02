@@ -26,7 +26,7 @@ export function ungroundedMomentClaims(text:string,b:Brief):string[]{
   const source=notes(b);
   const errors:string[]=[];
   // Low health is not necessarily 1 HP or exactly one hit from failure.
-  const oneHitClaim=/\b(?:one hit away|1 hit away|one hit from|single hit away|one mistake away|one wrong move away|one (?:timing )?mistake (?:meant|would mean|from)|a single mistake (?:meant|would mean)|one hit left|at one hp|at 1 hp)\b/i;
+  const oneHitClaim=/\b(?:one hit away|1 hit away|one hit from|single hit away|one mistake away|one wrong move away|one (?:timing )?mistake (?:means?|meant|would mean|from)|a single mistake (?:means?|meant|would mean)|one hit left|(?:at|on|with)\s+(?:one|1)\s*(?:hp|hit points?)(?:\s+left|\s+remaining)?|(?:one|1)\s*(?:hp|hit points?)\s+(?:left|remaining)|(?:one|1)\s+hit\s+means?\s+defeat)\b/i;
   const oneHitEvidence=/\b(?:one hit|1 hit|1 hp|one hp|one mistake away|one wrong move away)\b/i;
   if(oneHitClaim.test(text) && !oneHitEvidence.test(source))errors.push("unverified exact-death stakes");
   if(/\b(?:start(?:ing)? over|restart(?:ing)? (?:the run|from scratch)|run (?:would )?(?:fail|end)|failing the run)\b/i.test(text) &&
@@ -34,12 +34,15 @@ export function ungroundedMomentClaims(text:string,b:Brief):string[]{
       errors.push("unverified run failure or restart");
   if(/\b(?:boss(?:'s)? final phase|boss(?:'s)? last phase|final attack phase|final boss phase|boss(?:'s)? final attack phase)\b/i.test(text) &&
     !/\bphase\b/i.test(source))errors.push("unverified boss phase");
-  if(/\b(?:last.second dodge|split.second dodge|perfect(?:ly)? timed dodge|precision dodge|precise dodge)\b/i.test(text) &&
+  if(/\b(?:last.second dodge|split.second dodge|perfect(?:ly)? timed dodge|precision dodge|precise dodge|precise timing|perfect timing|(?:the )?exact right moment|exactly the right moment|a single timed dodge|timing the dodge|timed the dodge)\b/i.test(text) &&
     !/\b(?:last.second|split.second|perfect|precis|exact timing)\w*/i.test(source))
       errors.push("unverified dodge precision");
   if(/\b(?:boss (?:push(?:ed|es)?|knock(?:ed|s)?|reduc(?:ed|es)?|left|brought) (?:me|you|the player|my character).{0,35}\b(?:health|hp)|boss(?:'s)? (?:attacks?|hits?) (?:reduc(?:ed|es)?|left|brought).{0,35}\b(?:health|hp))\b/i.test(text) &&
     !/\bboss\b.{0,45}\b(?:left|reduced|brought|pushed|knocked|hit).{0,35}\b(?:health|hp)\b/i.test(source))
       errors.push("unverified cause of low health");
+  if(/\b(?:secured (?:the|my) run|saved (?:the|my) run|clean run escape|boss'?s finishing blow|boss'?s killing blow|finishing blow)\b/i.test(text) &&
+    !/\b(?:secured|saved (?:the|my) run|finishing blow|killing blow|completed the run|won the run)\b/i.test(source))
+      errors.push("unsupported run outcome or finishing blow");
   if(/\b(?:only way out|only chance to survive|only way to escape)\b/i.test(text) &&
     !/\bonly (?:way|chance)\b/i.test(source))errors.push("unverified exclusive strategy");
   return [...new Set(errors)];

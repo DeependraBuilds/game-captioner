@@ -62,6 +62,12 @@ YouTube receives its own **multi-paragraph video description**, rather than a Ti
 
 **Search optimization is not a ranking guarantee.** YouTube's own guidance prioritizes accurate, unique descriptions and relevant search terms. Hashtags are separate from the description and users can edit everything.
 
+## Additional uploaded CSV accuracy screening
+
+An additional five-platform Forza Horizon 5 export and five-platform Hades export revealed residual overstatements even though X captions and duplicate-hashtag handling remained correct. For Hades, a low-health boss dodge does not establish **1 HP left**, that **one mistake means defeat**, precisely timed input, a boss finishing blow or that the entire run was secured. The editor validates such claims in titles, descriptions, voiceovers, overlays and carousel items and falls back to the creator-supported facts where necessary.
+
+For racing clips, descriptions and carousels cannot claim a **perfectly timed** or **controlled** drift unless the source notes explicitly support it. Ordinary enthusiastic language is still allowed, while claims about particular mechanics need evidence. These are narrow text checks and should not be treated as video-based verification.
+
 ## Follow-up export integrity: accurate stakes and complete social captions
 
 After reviewing a second Hades/Forza pair of all-platform CSV exports, the shared validator now treats vague low health separately from **exact one-hit stakes**, and rejects unsourced boss phases, implied restarts, narrowly timed dodges and exclusive escape strategies. Statements remain available when the creator specifically supplies those details. These checks apply to model-written titles, captions, voiceovers, overlays and optional carousel beats.

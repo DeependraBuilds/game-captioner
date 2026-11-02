@@ -65,6 +65,9 @@
 - Added cross-field boss-stakes checks and core-action completeness checks for boss-dodge/escape and late-drift/overtake clips. Updated grounded social captions and non-YouTube titles, without changing export schema or provider request count.
 - Added regression tests based on the latest Hades and Forza exports. Removed unsupported details while preserving explicitly supplied mechanics.
 
+- Re-reviewed two five-platform exported drafts for Forza Horizon 5 and Hades. Confirmed X posts are populated and duplicate-free, but found hallucinated exact 1-HP health, guaranteed defeat, precisely timed boss dodges, claimed run security and unsupported controlled/perfectly timed racing drifts.
+- Extended the existing cross-field grounding layer and added six regression tests using text directly from the newly uploaded CSVs. No changes to export schema, provider request count, secrets or production.
+
 ### Known limitations
 
 - Template mode provides usable but less fluent prose than AI mode. It is not a trained language model.

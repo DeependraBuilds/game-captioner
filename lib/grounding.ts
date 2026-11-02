@@ -33,6 +33,10 @@ const sharedRules:ClaimRule[]=[
  {output:/\b(?:without (?:ever )?exposing (?:myself|yourself)|without (?:a )?(?:direct )?gunfight)\b/i,evidence:/\b(?:without exposing|without (?:a )?gunfight|no gunfight|never saw)\b/i,label:"unseen engagement"},
 ];
 const racingRules:ClaimRule[]=[
+ {output:/\b(?:controlled drift|controlled slide|held a controlled drift|perfectly timed (?:drift|slide|turn)|precisely timed (?:drift|slide|turn))\b/i,
+  evidence:/\b(?:controlled|control|perfectly timed|precisely timed|exact timing|timed the drift)\b/i,
+  label:"unverified drift control or precise timing"},
+
  {output:/\b(?:podium|podium finish|podium spot)\b/i,
   evidence:/\bpodium\b/i,label:"unsupported podium outcome"},
  {output:/\b(?:the|my|your|an?)\s+(?:whole|entire)\s+race\s+(?:in|at|from|staying|sitting)\s+(?:second|2nd)\b|\b(?:in|at)\s+(?:second|2nd)\s+(?:place\s+)?(?:for|throughout)\s+(?:the\s+)?(?:whole|entire)\s+race\b/i,
