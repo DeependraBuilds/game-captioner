@@ -13,7 +13,7 @@ test("Partial AI copy retains valid title and VO, filling omitted metadata from 
  assert.equal(output.titles[0],input.titles[0]);
  assert.equal(output.voiceover,input.voiceover);
  assert.equal(output.titles.length,3);
- assert.equal(output.caption,fallback.caption);
+ assert.equal(output.caption,fallback.caption.trim());
  assert.ok(output.hashtags.includes("#ForzaHorizon5"));
 });
 test("Partial AI copy still rejects empty and unrelated provider payloads",()=>{

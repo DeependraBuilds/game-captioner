@@ -51,7 +51,7 @@ export function racingDescription(b:Brief):string|null{
    "The important part of this "+game+" play is the sequence: final-corner entry, held drift"+(f.passed?", and a pass before the finish":", and the resulting corner exit")+". "+victory,
   ],
   casual:[
-   "This "+game+" clip is from the final corner, where I "+action+" and "+outcome+".",
+   "This "+game+" race clip is from the final corner, where I "+action+" and "+outcome+".",
    "I was"+(f.second?" in second place and":"")+" trying to make that last turn count. "+(f.passed?"Holding the drift gave me the pass I was looking for.":"I stayed with the drift through the corner.")+" It made for a fun finish to the clip.",
    "That last-corner move is what stood out to me in "+game+". "+(f.passed?"Getting past "+opponent+" just before the line felt good.":"The drift itself was enough of a moment.")+" "+victory,
   ],

@@ -37,7 +37,7 @@ const racingRules:ClaimRule[]=[
  {output:/\b(?:smooth|perfect|clean|ideal|optimal|risky|dangerous|aggressive)\s+(?:drift|slide|corner|line|entry|exit)\b/i,evidence:/\b(?:smooth|perfect|clean|ideal|optimal|risky|dangerous|aggressive)\b/i,label:"unverified driving quality"},
  {output:/\b(?:wall|barrier|guardrail|scenery|fence|crash\w*)\b/i,evidence:/\b(?:wall|barrier|guardrail|scenery|fence|crash\w*)\b/i,label:"invented racing accident or scenery"},
  {output:/\b(?:enough momentum|kept momentum|held momentum|maintain(?:ed|ing|s)? (?:the )?(?:speed|pace|momentum)|carried (?:the )?(?:speed|momentum))\b/i,evidence:/\b(?:momentum|speed|pace|carried speed)\b/i,label:"unsupported speed management"},
- {output:/\b(?:dying seconds|last seconds|final seconds|last.split second|split.second|final milliseconds)\b/i,evidence:/\b(?:seconds?|milliseconds?|timer|clock)\b/i,label:"unsupported timing precision"},
+ {output:/\b(?:dying seconds|last seconds|final seconds|last.split second|split.second|final milliseconds)\b/i,evidence:/\b(?:seconds|secs|milliseconds?|timer|clock)\b/i,label:"unsupported timing precision"},
  {output:/\b(?:risky (?:line|move|drift)|risk(?:ed|ing)? it all)\b/i,evidence:/\b(?:risky|risked|risking)\b/i,label:"invented racing risk"},
  {output:/\b(?:the notes|creator(?:'s)? notes|source brief|supplied (?:notes|source|facts)|original description|evidence (?:shows|states)|the clip notes|cannot assume|not assumed|was not specified)\b/i,evidence:/(?!)/,label:"internal writing-process language"},
 ];
