@@ -92,17 +92,20 @@ export function writeBasicDraft(b:Brief,p:Platform,baseTags:string[]):Content {
   if(b.tone==="cinematic"){hooks[1]="Everything came down to this";hooks[2]="One moment. One decision.";}
   if(b.tone==="hype"){hooks[1]="Wait for the payoff";hooks[2]="The moment everything changed";}
   const titles=[0,1,2].map((_,i)=>cut(hooks[(i+b.variant)%3],p==="youtube"?100:110));
-  const shortHook=a.hook;
-  const main=[a.setup,a.extra,a.payoff].filter(Boolean).join(" ");
+  const first=b.variant%3===0?a.hook:b.variant%3===1?a.payoff:a.setup;
+  const ending=b.variant%3===0?a.payoff:b.variant%3===1?a.hook:a.payoff;
+  const middle=[a.setup,a.extra].filter(Boolean).join(" ");
   const captions:Record<Platform,string>={
-    youtube:shortHook+"\n\n"+main+"\n\n"+b.game+" "+b.contentType+" gameplay.",
-    tiktok:shortHook+" "+a.payoff+"\n"+b.game+".",
-    instagram:shortHook+"\n\n"+main+"\n\n"+b.game+".",
-    facebook:"Here is what stood out about this "+b.game+" clip: "+a.setup+"\n\n"+a.payoff,
-    twitter:cut(b.game+": "+a.hook+" "+a.payoff,210),
+    youtube:first+"\n\n"+middle+"\n"+ending+"\n\n"+b.game+" "+b.contentType+" gameplay.",
+    tiktok:first+" "+(b.variant%3===0?a.payoff:a.setup)+"\n"+b.game+".",
+    instagram:first+"\n\n"+middle+"\n"+ending+"\n\n"+b.game+".",
+    facebook:"A "+b.game+" moment that stood out: "+first+"\n\n"+a.setup+" "+ending,
+    twitter:cut(b.game+": "+first+" "+ending,210),
   };
   // Target is approximate. Do not invent facts or pad scripts to fill 30 seconds.
-  const voiceLines=[a.hook,a.setup,a.extra,a.payoff].filter((s):s is string=>Boolean(s));
+  const voiceOrder=b.variant%3===0?[a.hook,a.setup,a.extra,a.payoff]:
+    b.variant%3===1?[a.setup,a.hook,a.extra,a.payoff]:[a.payoff,a.setup,a.extra,a.hook];
+  const voiceLines=voiceOrder.filter((s):s is string=>Boolean(s));
   const voiceMax=Math.round(b.duration*2.4);
   const vo:string[]=[];let words=0;
   for(const line of voiceLines){const count=line.split(/\s+/).length;if(!vo.length||words+count<=voiceMax+3){vo.push(line);words+=count;}}

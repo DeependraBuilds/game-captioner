@@ -266,8 +266,8 @@ export default function Home() {
                     <div className="editor-bottom"><span>{s==="titles"?"One title per line":s==="hashtags"?"One hashtag per line":s==="onscreen"?"One overlay per line":s==="voiceover"?"Approx. "+duration+" sec target":text.length+" characters"}</span>
                       {(s==="caption"||s==="voiceover"||s==="titles") && <div className="quick-actions">
                         <button type="button" disabled={Boolean(refining)} onClick={()=>void refine(p,s,"shorter")}>Shorter</button>
-                        <button type="button" disabled={Boolean(refining)} onClick={()=>void refine(p,s,"natural")}>More natural</button>
-                        <button type="button" disabled={Boolean(refining)} onClick={()=>void refine(p,s,"funnier")}>Funnier</button>
+                        <button type="button" disabled={Boolean(refining)||mode==="offline"} title={mode==="offline"?"Available with Creative AI mode":undefined} onClick={()=>void refine(p,s,"natural")}>More natural (AI)</button>
+                        <button type="button" disabled={Boolean(refining)||mode==="offline"} title={mode==="offline"?"Available with Creative AI mode":undefined} onClick={()=>void refine(p,s,"funnier")}>Funnier (AI)</button>
                       </div>}
                       {s==="cta" && <button className="text-action" type="button" onClick={()=>void refine(p,s,"remove-cta")}>Remove CTA</button>}
                     </div>
