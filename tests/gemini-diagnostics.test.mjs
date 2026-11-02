@@ -60,6 +60,7 @@ test("valid generated content enters creative mode and uses a low-thinking reque
  },async()=>{
   const result=await (await respond(request("198.51.100.32"),false)).json();
   assert.equal(result.mode,"creative");
-  assert.equal(result.results.youtube.caption,content.caption);
+  assert.ok(result.results.youtube.caption.length > content.caption.length);
+  assert.ok(result.results.youtube.caption.split(/\n\s*\n/).length >= 2);
  });
 });

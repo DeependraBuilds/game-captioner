@@ -54,6 +54,14 @@ GEMINI_API_KEY=<your-key>
 
 If disabled, rate limited, unreachable or invalid, Basic mode remains available, with a safe explanation in the output studio. The request distinguishes model HTTP errors, malformed provider JSON, incompatible AI drafts, aborted requests and network errors. On Vercel it logs only a narrow phase, model ID, status or allowlisted network code, never the key, full description, generated text or client IP. For Gemini 3 the application requests low thinking to reduce latency for short-form copy. The public browser never receives the key. The app has best-effort per-instance limits (15 API calls/minute/IP, 3 AI requests/hour/IP, 30 AI requests/day/instance), request-size validation, a 12-second model timeout and no logs containing descriptions. **Vercel instances do not share those counters. They are not a global spending cap.** For public deployment, do not enable Gemini against a billable account without external provider-level quotas and billing safeguards. Free-tier availability, quotas and data-use terms depend on your Google account and may change. The hosted default is free template mode.
 
+## Language and YouTube discovery descriptions
+
+For English briefs, the Gemini prompt explicitly requests English writing. Unexpected East Asian script in AI-generated titles, descriptions, voiceovers and overlays is replaced field-by-field by the grounded fallback. Intentionally bilingual game names and briefs are not rejected.
+
+YouTube receives its own **multi-paragraph video description**, rather than a TikTok-style one-line caption. AI descriptions must have at least two paragraphs, at least 65 words, and explicitly identify the game. When the AI response is too short or uses unexpected script, that field falls back to a longer source-grounded three-paragraph version. Relevant game and gameplay terms appear naturally in the opening lines, with details and a clear takeaway. The system never fabricates map names or claimed outcomes just to fill space. Other social platforms retain their own more compact formats.
+
+**Search optimization is not a ranking guarantee.** YouTube's own guidance prioritizes accurate, unique descriptions and relevant search terms. Hashtags are separate from the description and users can edit everything.
+
 ## Editorial quality and testing
 
 The creative prompt asks the model to act as a gaming editor instead of a description paraphraser. It emphasizes the angle and payoff, grounded facts, platform differentiation and natural spoken voiceovers. Automated tests include a long real-world-style multi-round C4 example and non-shooter genres. No API key is bundled; AI quality requires a configured server-side Gemini key. Without it, the app clearly labels the results **Basic mode**.

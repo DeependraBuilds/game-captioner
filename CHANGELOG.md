@@ -21,6 +21,9 @@
 
 - Fixed AI fallback diagnostics so malformed model JSON is not incorrectly reported as a network failure; added safe diagnostic phases and low Gemini 3 thinking for faster generation.
 
+- Added a dedicated multi-paragraph YouTube description with game-focused opening, clip detail, and takeaway, replacing one-line AI replies with a grounded longer fallback.
+- Enforced English-language output for English-language briefs; replaces unexpected East Asian script at field level while preserving multilingual source material.
+
 ### Known limitations
 
 - Template mode provides usable but less fluent prose than AI mode. It is not a trained language model.

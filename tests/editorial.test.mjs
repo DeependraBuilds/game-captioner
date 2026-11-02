@@ -10,7 +10,7 @@ test("long Siege example is condensed rather than echoed in all platforms",()=>{
     assert.ok(output.caption.includes("C4") || output.caption.includes("timing"));
     assert.ok(!output.caption.includes("I have the clips where"));
     assert.ok(!output.caption.includes(description.slice(0,55)));
-    assert.ok(output.caption.length<description.length+80);
+    assert.ok(p==="youtube" ? output.caption.split(/\n\s*\n/).length>=2 : output.caption.length<description.length+80);
     assert.ok(!output.voiceover.includes("I have the clips"));
   }
 });

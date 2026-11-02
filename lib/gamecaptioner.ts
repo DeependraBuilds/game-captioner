@@ -1,4 +1,5 @@
 import { writeBasicDraft } from "./editorial.ts";
+import { adequateYouTubeDescription, hasUnexpectedEastAsianScript } from "./youtube-description.ts";
 
 export const PLATFORMS = ["youtube", "tiktok", "instagram", "facebook", "twitter"] as const;
 export type Platform = (typeof PLATFORMS)[number];
@@ -107,13 +108,23 @@ export function validContent(value: unknown, b: Brief, p: Platform): Content | n
       typeof caption !== "string" || typeof voiceover !== "string" || typeof cta !== "string" ||
       caption.length > 1800 || voiceover.length > 900 || cta.length > 160) return null;
   const cleanTags = hashtags.filter(s => /^#[A-Za-z0-9_]+$/.test(s)).slice(0, p === "twitter" ? 2 : 4);
+  const backup = createFallback(b,p);
+  const checkedTitles = titles.map((title,index) =>
+    hasUnexpectedEastAsianScript(title,b) ? backup.titles[index] : title
+  );
+  const checkedCaption = p === "youtube"
+    ? (adequateYouTubeDescription(caption,b) ? caption.trim() : backup.caption)
+    : (hasUnexpectedEastAsianScript(caption,b) ? backup.caption : caption.trim());
   const prepared: Content = {
-    titles: titles.map(t => clip(t.trim(), p === "youtube" ? 100 : 110)),
-    caption: caption.trim(),
+    titles: checkedTitles.map(t => clip(t.trim(), p === "youtube" ? 100 : 110)),
+    caption: checkedCaption,
     hashtags: cleanTags.length ? cleanTags : hashtagsFor(b, p),
-    voiceover: voiceover.trim(), onscreen: onscreen.map(s => clip(s.trim(), 45)),
-    cta: b.includeCTA ? cta.trim() : "",
-    carousel: b.includeCarousel ? carousel : [],
+    voiceover: hasUnexpectedEastAsianScript(voiceover,b) ? backup.voiceover : voiceover.trim(),
+    onscreen: onscreen.map((s,i) => hasUnexpectedEastAsianScript(s,b)
+      ? (backup.onscreen[i]||"") : clip(s.trim(), 45)),
+    cta: b.includeCTA ? (hasUnexpectedEastAsianScript(cta,b) ? backup.cta : cta.trim()) : "",
+    carousel: b.includeCarousel ? carousel.map((s,i) => hasUnexpectedEastAsianScript(s,b)
+      ? (backup.carousel[i]||"") : s) : [],
   };
   if (p === "twitter" && publishText(prepared).length > 280) {
     prepared.caption = clip(prepared.caption, 280 - prepared.hashtags.join(" ").length - 2);

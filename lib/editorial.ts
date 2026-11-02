@@ -1,5 +1,6 @@
 import type { Brief, Content, Platform } from "./gamecaptioner.ts";
 import { youtubeTitles } from "./youtube-titles.ts";
+import { basicYouTubeDescription } from "./youtube-description.ts";
 
 type Angle = { hook: string; setup: string; payoff: string; overlay: string; extra?: string };
 function period(s:string):string { return /[.!?]$/.test(s) ? s : s + "."; }
@@ -97,7 +98,7 @@ export function writeBasicDraft(b:Brief,p:Platform,baseTags:string[]):Content {
   const ending=b.variant%3===0?a.payoff:b.variant%3===1?a.hook:a.payoff;
   const middle=[a.setup,a.extra].filter(Boolean).join(" ");
   const captions:Record<Platform,string>={
-    youtube:first+"\n\n"+middle+"\n"+ending+"\n\n"+b.game+" "+b.contentType+" gameplay.",
+    youtube:basicYouTubeDescription(b,a),
     tiktok:first+" "+(b.variant%3===0?a.payoff:a.setup)+"\n"+b.game+".",
     instagram:first+"\n\n"+middle+"\n"+ending+"\n\n"+b.game+".",
     facebook:"A "+b.game+" moment that stood out: "+first+"\n\n"+a.setup+" "+ending,

@@ -262,7 +262,7 @@ export default function Home() {
                         <button type="button" onClick={()=>void copy(text,sectionLabels[s])} title={"Copy "+s}>Copy</button>
                         <button type="button" disabled={Boolean(refining)} onClick={()=>void refine(p,s,"regenerate")} title={"Regenerate "+s}>{refining===uid?"Working…":"↻ Rewrite"}</button>
                       </div></div>
-                    <textarea id={uid} rows={s==="caption"?5:s==="voiceover"?4:s==="carousel"?5:lineSections.has(s)?3:2} value={text} onChange={e=>update(p,s,e.target.value)} />
+                    <textarea id={uid} rows={s==="caption"?(p==="youtube"?9:5):s==="voiceover"?4:s==="carousel"?5:lineSections.has(s)?3:2} value={text} onChange={e=>update(p,s,e.target.value)} />
                     <div className="editor-bottom"><span>{s==="titles"?(p==="youtube"?"In order: Search • Curiosity • Skill (100-character maximum)":"One title per line"):s==="hashtags"?"One hashtag per line":s==="onscreen"?"One overlay per line":s==="voiceover"?"Approx. "+duration+" sec target":text.length+" characters"}</span>
                       {(s==="caption"||s==="voiceover"||s==="titles") && <div className="quick-actions">
                         <button type="button" disabled={Boolean(refining)} onClick={()=>void refine(p,s,"shorter")}>Shorter</button>
