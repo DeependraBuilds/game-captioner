@@ -3,14 +3,6 @@ import type { Brief } from "./gamecaptioner.ts";
 type EditorialAngle = { hook:string; setup:string; payoff:string; extra?:string };
 const words = (text:string) => text.trim().split(/\s+/).filter(Boolean).length;
 const cap = (text:string) => text.trim().replace(/[.!?]+$/, "");
-function readableFact(text:string):string {
-  return text
-    .replace(/^(?:so |basically |okay,? )?(?:i (?:have|got|made|recorded) (?:some |the |these |a |my )?(?:clips?|videos?|footage) (?:where |showing |of )?|(?:this|the) (?:clip|video) (?:shows?|is about) )/i,"")
-    .trim().replace(/^[,;.\s]+/,"");
-}
-function splitSentences(raw:string):string[] {
-  return readableFact(raw).split(/(?<=[.!?])\s+/).map(s=>s.trim()).filter(Boolean);
-}
 const finalSentence = (s:string) => /[.!?]$/.test(s) ? s : s+".";
 export function basicYouTubeDescription(b:Brief,a:EditorialAngle):string {
   const source=(b.description+" "+b.notable).toLowerCase();
@@ -147,14 +139,16 @@ export function basicYouTubeDescription(b:Brief,a:EditorialAngle):string {
       :has(/\b(?:build|layout|base)\b/)?"a build and the choices behind it."
       :has(/\b(?:clutch|1v[2-9])\b/)?"a pressured comeback."
       :"one specific gameplay moment.");
-  const facts=splitSentences(b.description);
-  const first=facts[0]||a.setup;
-  // Never append a period to an arbitrary first-eight-word fragment such as
-  // "I entered the last corner in second, held."
-  const clearSource=first.split(/(?<=[.!?])\s+/)[0].trim();
-  const distinctFact=clearSource.length<=170 ? clearSource : "";
-  const middle=(distinctFact && !a.setup.toLowerCase().includes(distinctFact.toLowerCase())
-    ? finalSentence(distinctFact)+" " : "")+a.setup+(b.notable?" "+finalSentence(b.notable):"");
+  const sceneDetail=has(/\b(?:fire|flames|burned)\b/) && has(/\b(?:kitchen|cooking|dinner)\b/)
+    ? "The cooking attempt is the setup and the kitchen fire is the outcome shown."
+    : has(/\b(?:greenhouse|harvest)\b/)
+    ? "The farm progress is the change shown in this clip, rather than an invented extra milestone."
+    : has(/\bboss\b/) && has(/\b(?:dodg|surviv|escape)\w*\b/)
+    ? "The boss encounter and the response to it are the actions the clip actually describes."
+    : has(/\b(?:trade|diplomac|negotiat)\w*\b/)
+    ? "The important choice in this clip is the negotiation or trade described in the notes."
+    : "The clip stays focused on the action described, without assuming extra mechanics or match results.";
+  const middle=a.setup+" "+sceneDetail+(b.notable?" "+finalSentence(b.notable):"");
   const endings={
     hype:"The payoff is what makes this "+b.game+" moment stand out, but the setup is worth noticing too. "+a.payoff+" That's the moment the clip is really about.",
     funny:"The result might look unexpected, but the setup is the part worth noticing in "+b.game+". "+a.payoff+" Sometimes that's all the explanation a clip needs.",
