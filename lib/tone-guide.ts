@@ -4,16 +4,16 @@ export type Narrative = { hook: string; setup: string; payoff: string; overlay: 
 
 export const TONE_GUIDANCE: Record<Tone, { voice: string; titles: string; description: string; overlays: string; avoid: string }> = {
   hype: {
-    voice:"Energetic, payoff-first and conversational. Make the actual overtake, clutch, or finish feel immediate. Keep spoken sentences short and never turn excitement into a lecture."
+    voice:"Energetic, payoff-first and conversational. Make the actual overtake, clutch, or finish feel immediate. Keep spoken sentences short and never turn excitement into a lecture.",
     titles:"High-energy hook with a specific result. Enthusiasm must come from the verified event.",
-    description:"Start with what happened, make the payoff feel immediate, and follow with the verified setup. Keep search terms natural. Do not turn one highlight into a coaching tutorial or a general driving strategy."
+    description:"Start with what happened, make the payoff feel immediate, and follow with the verified setup. Keep search terms natural. Do not turn one highlight into a coaching tutorial or a general driving strategy.",
     overlays:"Short impact beats; emphasize the decisive moment without false numbers.",
-    avoid:"ALL CAPS paragraphs, generic insane/epic/crazy claims, fake stakes, forced exclamation marks, reliable-way-to advice, unverified driving mechanics and lecture-style takeaways."
+    avoid:"ALL CAPS paragraphs, generic insane/epic/crazy claims, fake stakes, forced exclamation marks, reliable-way-to advice, unverified driving mechanics and lecture-style takeaways.",
   },
   funny: {
     voice:"Dry, playful commentary with a grounded punchline. Joke about the situation, not invented events.",
     titles:"Curiosity and light irony; still searchable and fact-based.",
-    description:"Describe the actual gameplay clearly. Use observational humor about the confirmed situation, not an invented sequence. Stay playful without switching to a tutorial tone."
+    description:"Describe the actual gameplay clearly. Use observational humor about the confirmed situation, not an invented sequence. Stay playful without switching to a tutorial tone.",
     overlays:"One concise playful line, not wall-to-wall memes.",
     avoid:"Invented failures, opponents' intentions, meme spam, unsupported punchlines.",
   },
@@ -27,7 +27,7 @@ export const TONE_GUIDANCE: Record<Tone, { voice: string; titles: string; descri
   tactical: {
     voice:"Clear, specific game sense: setup, information, timing, execution. Speak like a knowledgeable teammate.",
     titles:"Name a real mechanic or decision and why it mattered.",
-    description:"Ground the analysis only in supplied inputs, positions, abilities, sequence and payoff. Explain the real decision with plain words, not inferred vehicle physics or invented mechanics."
+    description:"Ground the analysis only in supplied inputs, positions, abilities, sequence and payoff. Explain the real decision with plain words, not inferred vehicle physics or invented mechanics.",
     overlays:"Minimal actionable cues, a useful read or turning point.",
     avoid:"Speculative audio, comms, gadget synergy, angles, enemy intent, or positions not supplied.",
   },
