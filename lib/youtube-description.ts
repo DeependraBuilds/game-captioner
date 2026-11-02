@@ -1,4 +1,5 @@
 import type { Brief } from "./gamecaptioner.ts";
+import { racingDescription } from "./racing-description.ts";
 
 type EditorialAngle = { hook:string; setup:string; payoff:string; extra?:string };
 const words = (text:string) => text.trim().split(/\s+/).filter(Boolean).length;
@@ -76,62 +77,8 @@ export function basicYouTubeDescription(b:Brief,a:EditorialAngle):string {
     const end=toneEnd[b.tone];
     return [intro,detail,end].join("\n\n");
   }
-  // Use a factual, genre-specific fallback only when the brief actually mentions the closing corner.
-  const finalCorner=has(/\b(?:last|final) corner\b/);
-  if(finalCorner && has(/\b(?:pass(?:ed|ing)? the leader|overtak\w*)\b/)) {
-    const drift=has(/\bdrift\b/);
-    const passed=has(/\b(?:pass(?:ed|ing)? the leader|overtak\w*)\b/);
-    const action=drift?"held a drift through the final corner":"made the move in the final corner";
-    const result=passed?"passed the leader before the finish":"made the last corner count";
-    const opening={
-      hype:"Final corner, one big move in "+b.game+"! I "+action+" and "+result+". The ending was all about that timing.",
-      funny:"The final corner in "+b.game+" seemed like a good place to change the order. I "+action+" and "+result+".",
-      competitive:"In this "+b.game+" race, I "+action+" and "+result+". The pass started with choosing the right moment to commit.",
-      tactical:"In "+b.game+", I "+action+" and "+result+". The corner timing is what made this racing clip worth breaking down.",
-      casual:"This "+b.game+" race clip is from the final corner. I "+action+" and "+result+". That was the moment I wanted to share.",
-      cinematic:"The final corner was the turning point in this "+b.game+" race. I "+action+" and "+result+".",
-    };
-    const explanation={
-      hype:"Everything happened in the closing stretch. The drift and the overtake were the actual highlights, and there was no room to add another move after the corner.",
-      funny:"It wasn't a complicated plan: get through the corner and see if the move worked. This time the last turn was where the race got interesting.",
-      competitive:"The move came through the corner. I kept the focus on the overtake that actually happened rather than treating one pass as proof of the final race result.",
-      tactical:"The decision was the corner entry and how long I held the move. The important result in the footage is the pass before the line, not an assumed race victory.",
-      casual:"I stayed with the move through that last turn. What makes the clip fun is getting the pass at the end after lining up the corner.",
-      cinematic:"The closing stretch brought the decision into focus. The last turn gave the move its shape, and the pass was the moment it paid off.",
-    };
-    const ending={
-      hype:"The payoff here is "+b.game+" racing at its most direct: one corner, one decisive move, and the leader in reach right before the finish.",
-      funny:"Sometimes all a "+b.game+" clip needs is a final corner and an overtake. This one had both, and that is plenty to talk about.",
-      competitive:"For "+b.game+" players, the useful detail is the timing of the final-corner move. The overtake is the result shown in this clip.",
-      tactical:"The takeaway for "+b.game+" racing is the choice of when to commit through the corner. The clip shows the overtake, which is the result worth analyzing.",
-      casual:"That's what stood out to me in "+b.game+". I liked the last-corner move and the fact that it turned into a pass near the line.",
-      cinematic:"The corner came first, and the pass came just before the finish. That short sequence is what makes the "+b.game+" moment memorable.",
-    };
-    return [opening[b.tone],explanation[b.tone],ending[b.tone]].join("\n\n");
-  }
-  if(has(/\b(?:drift\w*|slide|slid)\b/) && has(/\b(?:last|final)\s+(?:turn|corner)\b/)) {
-    const outcome=has(/\b(?:pass(?:ed|ing)?|overtak\w*|took the lead|went past)\b/)
-      ? "The move happened near the finish, but the clip notes do not establish the overall race result."
-      : "The drift itself is the moment described, without an assumed pass or race result.";
-    const setups={
-      hype:"The last corner of "+b.game+" gave me a chance to commit to a drift. This was the moment the clip built toward.",
-      funny:"I got to the final corner in "+b.game+" and committed to a drift. No need to invent the rest of the race to make that worth watching.",
-      competitive:"In "+b.game+", I took a drift through the final corner. The relevant decision is where the move happened.",
-      tactical:"The key moment in this "+b.game+" racing clip is the drift through the final corner. That is the action the notes establish.",
-      casual:"This "+b.game+" clip is about a drift through the last corner. That's the moment I wanted to share.",
-      cinematic:"The last corner arrived in "+b.game+". I held the drift through the turn, with the finish ahead.",
-    };
-    const details={
-      hype:"The final turn is where the action happens. The clip focuses on the held drift rather than extra techniques or a claimed victory.",
-      funny:"The corner came, the drift happened, and I didn't need a whole racing lecture to explain it.",
-      competitive:"The note confirms the drift and its placement on the track. No throttle technique or finishing position is inferred.",
-      tactical:"The described action is holding the drift at the last corner. Any additional driving inputs or positions need separate evidence.",
-      casual:"I held the drift through that last turn, and that's the part of the race I clipped.",
-      cinematic:"One move through the corner gives this short clip its focus. What follows is only what the creator actually described.",
-    };
-    return [setups[b.tone],details[b.tone],
-      "For "+b.game+" viewers, the focus is the final-corner drift. "+outcome].join("\n\n");
-  }
+  const racing=racingDescription(b);
+  if(racing)return racing;
   const intro=b.game+" "+b.contentType+" gameplay: "+finalSentence(cap(a.hook))
     +" This clip focuses on "+(has(/\bboss\b/)?"a close boss encounter."
       :has(/\b(?:drift|corner|racing|overtak)\b/)?"the critical racing moment."

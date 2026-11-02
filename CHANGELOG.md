@@ -38,6 +38,10 @@
 - Corrected Basic racing fallback for varied drift and last-corner notes and stopped extracting arbitrary eight-word fragments ending in incomplete sentences.
 - Added regression tests for incomplete but usable AI replies, multipart output, no-usable-data responses and fallback copy formatting.
 
+- Replaced two overlapping racing fallback branches with a single source-fact driven, six-tone racing description engine; preserves verified late overtakes and removes self-referential notes/evidence language from published copy.
+- Hardened race-specific AI validation against invented braking zones, walls/scenery, opponent tracking, speed claims, risk, and false timing precision. Added five regression tests covering the reported Hype/Funny outputs and Tactical fallback.
+- Updated Gemini voice guidance so source-check instructions never become published copy.
+
 ### Known limitations
 
 - Template mode provides usable but less fluent prose than AI mode. It is not a trained language model.

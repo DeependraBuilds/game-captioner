@@ -62,6 +62,12 @@ YouTube receives its own **multi-paragraph video description**, rather than a Ti
 
 **Search optimization is not a ranking guarantee.** YouTube's own guidance prioritizes accurate, unique descriptions and relevant search terms. Hashtags are separate from the description and users can edit everything.
 
+## Source-grounded racing content, not writing-process commentary
+
+For final-corner racing clips the deterministic fallback extracts whether the brief explicitly mentions a drift, the final turn, an overtake, starting in second place, proximity to the finish and an actual race win. All six tones receive three natural paragraphs about the gameplay without references to source notes, missing evidence or the generation process. An overtaking maneuver is not silently removed just because the model response is rejected. The system does not equate an overtake with a race victory.
+
+The AI validator also rejects unsupported braking, car-control, racing-line, wall/scenery, risky-driving, precise timing and speed-management details. Published text is validated by field; if an AI description loses its structure after rejecting unsupported claims, a game-appropriate source-grounded description is substituted. These are narrow guardrails, not universal factual verification.
+
 ## Partial Gemini output and safer Basic fallback
 
 A Gemini response can omit optional arrays or output an incomplete draft even when the returned JSON is valid. GameCaptioner now preserves useful generated titles, captions, voiceovers and overlays while filling absent fields from its local draft. For a single selected platform it also accepts a direct draft object without an extra platform wrapper, and it joins multiple non-thinking text parts before parsing. The application makes **one provider request** per generation attempt; it does not silently retry a rejected response. Invalid JSON, missing usable content and upstream failures still trigger Basic mode with a visible warning.

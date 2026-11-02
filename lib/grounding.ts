@@ -31,6 +31,16 @@ const sharedRules:ClaimRule[]=[
  {output:/\b(?:defensive and attacking scenarios|both attack and defense|on attack and defense)\b/i,evidence:/\b(?:both sides|attack and defense|defense and attack)\b/i,label:"both roles"},
  {output:/\b(?:without (?:ever )?exposing (?:myself|yourself)|without (?:a )?(?:direct )?gunfight)\b/i,evidence:/\b(?:without exposing|without (?:a )?gunfight|no gunfight|never saw)\b/i,label:"unseen engagement"},
 ];
+const racingRules:ClaimRule[]=[
+ {output:/\b(?:brak(?:e|es|ed|ing)\s+(?:zone|point|late)|under braking|braking zone|brake pressure)\b/i,evidence:/\bbrak\w*\b/i,label:"braking technique"},
+ {output:/\b(?:track(?:ed|ing)?\s+(?:tightly|closely)\s+(?:around|behind|alongside)|stayed\s+(?:tight|close)\s+(?:to|around)|around\s+the\s+(?:opponent|rival|leader))\b/i,evidence:/\b(?:tracked|tracking|around|alongside|close to|side.by.side)\b/i,label:"opponent tracking"},
+ {output:/\b(?:smooth|perfect|clean|ideal|optimal|risky|dangerous|aggressive)\s+(?:drift|slide|corner|line|entry|exit)\b/i,evidence:/\b(?:smooth|perfect|clean|ideal|optimal|risky|dangerous|aggressive)\b/i,label:"unverified driving quality"},
+ {output:/\b(?:wall|barrier|guardrail|scenery|fence|crash\w*)\b/i,evidence:/\b(?:wall|barrier|guardrail|scenery|fence|crash\w*)\b/i,label:"invented racing accident or scenery"},
+ {output:/\b(?:enough momentum|kept momentum|held momentum|maintain(?:ed|ing|s)? (?:the )?(?:speed|pace|momentum)|carried (?:the )?(?:speed|momentum))\b/i,evidence:/\b(?:momentum|speed|pace|carried speed)\b/i,label:"unsupported speed management"},
+ {output:/\b(?:dying seconds|last seconds|final seconds|last.split second|split.second|final milliseconds)\b/i,evidence:/\b(?:seconds?|milliseconds?|timer|clock)\b/i,label:"unsupported timing precision"},
+ {output:/\b(?:risky (?:line|move|drift)|risk(?:ed|ing)? it all)\b/i,evidence:/\b(?:risky|risked|risking)\b/i,label:"invented racing risk"},
+ {output:/\b(?:the notes|creator(?:'s)? notes|source brief|supplied (?:notes|source|facts)|original description|evidence (?:shows|states)|the clip notes|cannot assume|not assumed|was not specified)\b/i,evidence:/(?!)/,label:"internal writing-process language"},
+];
 const siegeTerms=["Mira","Deimos","Castle","Valkyrie","Chalet","Oregon","Clubhouse","Coastline","Kafe","Bank","Border","Kitchen","Master Bedroom"];
 function siegeRules(b:Brief):ClaimRule[] {
  if(!/rainbow six|r6\b/i.test(b.game))return [];
@@ -54,7 +64,8 @@ function killRule(text:string,evidence:string):string[] {
 }
 export function unsupportedClaims(text:string,b:Brief):string[] {
  const evidence=b.description+" "+b.notable;
- const rules=[...sharedRules,...siegeRules(b)];
+ const racing=/\b(?:race|racing|drift\w*|overtak\w*|corner|car|finish line|racer|slid|slide)\b/i.test(evidence);
+ const rules=[...sharedRules,...(racing?racingRules:[]),...siegeRules(b)];
  const warnings=rules.filter(item=>item.output.test(text) && !item.evidence.test(evidence)).map(item=>item.label);
  return [...new Set([...warnings,...killRule(text,evidence)])];
 }
