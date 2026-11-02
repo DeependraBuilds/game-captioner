@@ -43,7 +43,7 @@ CSV and tab-separated exports include platform, game, three titles, caption, has
 
 ## Optional Gemini integration
 
-The application works in **Basic mode** without an API key. It now interprets common gameplay patterns (timing, doubles, clutch, racing, boss fights, building, farming and humor) and generates short angle-led copy instead of automatically repeating the full description. It is still a **rules-based fallback**, not a substitute for genuine language understanding. Novel or complex clips need creative AI drafting. The "Rewrite" buttons use the language model when enabled; otherwise they use basic rules. The server supports **optional** Gemini 2.5 Flash-Lite for more flexible drafts.
+The application works in **Basic mode** without an API key. It now interprets common gameplay patterns (timing, doubles, clutch, racing, boss fights, building, farming and humor) and generates short angle-led copy instead of automatically repeating the full description. It is still a **rules-based fallback**, not a substitute for genuine language understanding. Novel or complex clips need creative AI drafting. The "Rewrite" buttons use the language model when enabled; otherwise they use basic rules. The server supports **optional** Gemini 3.5 Flash-Lite (current recommended default) for more flexible drafts. Google restricts access to Gemini 2.5 on newly active projects; legacy project owners can explicitly set `GEMINI_MODEL=gemini-2.5-flash-lite` if their project supports it. Both are subject to the Google account\u2019s eligibility and quotas.
 
 Set these values **only** in server-side Vercel environment settings or a local `.env.local` (never commit a key):
 
@@ -52,7 +52,7 @@ GEMINI_ENABLED=true
 GEMINI_API_KEY=<your-key>
 ```
 
-If disabled, rate limited, unreachable or invalid, template mode remains available. The public browser never receives the key. The app has best-effort per-instance limits (15 API calls/minute/IP, 3 AI requests/hour/IP, 30 AI requests/day/instance), request-size validation, a 12-second model timeout and no logs containing descriptions. **Vercel instances do not share those counters. They are not a global spending cap.** For public deployment, do not enable Gemini against a billable account without external provider-level quotas and billing safeguards. Free-tier availability, quotas and data-use terms depend on your Google account and may change. The hosted default is free template mode.
+If disabled, rate limited, unreachable or invalid, Basic mode remains available, with a safe explanation in the output studio. The public browser never receives the key. The app has best-effort per-instance limits (15 API calls/minute/IP, 3 AI requests/hour/IP, 30 AI requests/day/instance), request-size validation, a 12-second model timeout and no logs containing descriptions. **Vercel instances do not share those counters. They are not a global spending cap.** For public deployment, do not enable Gemini against a billable account without external provider-level quotas and billing safeguards. Free-tier availability, quotas and data-use terms depend on your Google account and may change. The hosted default is free template mode.
 
 ## Editorial quality and testing
 
@@ -70,6 +70,7 @@ The creative prompt asks the model to act as a gaming editor instead of a descri
 ## Structure
 
 - `lib/gamecaptioner.ts`: shared platforms, validation, template generation and result contracts
+- `lib/youtube-titles.ts`: YouTube-specific searchable, curiosity and skill headline variants, with a strict 100-character maximum
 - `lib/game-catalog.ts`: grouped catalog, aliases and ranked text matching
 - `components/game-selector.tsx`: searchable game combobox with custom-title support
 - `lib/server.ts`: request security, generation endpoint and optional model provider

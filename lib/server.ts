@@ -37,14 +37,20 @@ function adjust(content: Content, section: Section | null, adjustment: Adjustmen
   if (section === "carousel") copy.carousel = copy.carousel.map(t => clip(t, 90));
   return copy;
 }
-async function withGemini(b: Brief, client: string, section: Section | null, adjustment: Adjustment | null, existing: string): Promise<Partial<Record<Platform, Content>> | null> {
+type AiAttempt = { output: Partial<Record<Platform,Content>> | null; reason?: "not_configured" | "local_limit" | "daily_limit" | "access_denied" | "model_unavailable" | "provider_quota" | "provider_error" | "invalid_response" | "timeout" | "network_error" };
+async function withGemini(b: Brief, client: string, section: Section | null, adjustment: Adjustment | null, existing: string): Promise<AiAttempt> {
   const apiKey = process.env.GEMINI_API_KEY;
-  if (process.env.GEMINI_ENABLED !== "true" || !apiKey) return null;
+  if (process.env.GEMINI_ENABLED !== "true" || !apiKey) return { output: null, reason: "not_configured" };
+  // Default to the currently recommended free-tier-capable Flash-Lite generation model.
+  // A site owner can select the older model explicitly if their Gemini project supports it.
+  const allowedModels = ["gemini-3.5-flash-lite", "gemini-2.5-flash-lite"] as const;
+  const requestedModel = process.env.GEMINI_MODEL || allowedModels[0];
+  const model = allowedModels.find(item => item === requestedModel) || allowedModels[0];
   // Best-effort per-instance limits. Not a distributed quota. Keep provider billing/quotas restricted.
-  if (!withinLimit(aiAttempts, client, 3, 60 * 60 * 1000)) return null;
+  if (!withinLimit(aiAttempts, client, 3, 60 * 60 * 1000)) return { output:null,reason:"local_limit" };
   const now = Date.now();
   if (now > aiTotal.until) aiTotal = { count: 0, until: now + 24 * 60 * 60 * 1000 };
-  if (++aiTotal.count > 30) return null;
+  if (++aiTotal.count > 30) return { output:null,reason:"daily_limit" };
   const prompt = [
     "You are an experienced gaming short-form editor, NOT a summarizer or transcription tool.",
     "Your job is to turn rough gameplay notes into compelling, natural ORIGINAL copy grounded in the facts.",
@@ -59,7 +65,8 @@ async function withGemini(b: Brief, client: string, section: Section | null, adj
     "Do not blindly copy these examples. They illustrate transformation across genres, not a default game.",
     "Use authentic creator wording. Avoid generic hype ('insane', 'epic', 'crazy'), corporate phrases, forced memes, irrelevant FPS references, excessive emojis, repeated 'not luck' statements, and invented CTA.",
     "Make channels genuinely different: YouTube has a searchable title and concise context; TikTok is punchy and conversational; Instagram has a crisp hook and a brief beat/story; Facebook offers a natural brief explanation; X is a standalone tight thought.",
-    "Titles: three DISTINCT angles, not tiny variations of the same sentence. YouTube titles <=100 characters.",
+    "YouTube titles: provide three SPECIFIC distinct approaches in this order: (1) searchable outcome/result with game name, (2) curiosity/tension backed by the facts, (3) the tactical decision/skill or unique mechanic. Include the game title in every title naturally, use a familiar community abbreviation only if genuinely recognizable. The first 50-70 characters should communicate the hook. Keep every YouTube title under 100 characters.",
+    "Do NOT produce vague titles like 'What made this moment work', 'The detail that changed the play', 'One gaming moment worth watching', or pure descriptions. Do not invent multi-kills, victories, operator names, maps or game-specific vocabulary not provided.",
     "Voiceover: spoken, rhythmic, 2-4 concise sentences, no robotic narration, approximately "+b.duration+" seconds at 2.3 words/sec. Do not pad with invented facts.",
     "Provide short overlay suggestions with no unnecessary repetition. Hashtags relevant, restrained, separate from caption.",
     "DO NOT invent details, characters, maps, kills, rules, rankings, statistics, current trends or game genres. Only infer a creative angle from supplied facts. If uncertain, stay general.",
@@ -72,34 +79,38 @@ async function withGemini(b: Brief, client: string, section: Section | null, adj
   ].filter(Boolean).join("\n");
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 12000);
+    const timeout = setTimeout(() => controller.abort(), b.platforms.length > 2 ? 25000 : 18000);
     try {
-      const res = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent", {
+      const res = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + model + ":generateContent", {
         method:"POST", signal:controller.signal,
         headers:{ "Content-Type":"application/json", "x-goog-api-key":apiKey },
         body:JSON.stringify({
           contents:[{ parts:[{ text:prompt }] }],
-          generationConfig:{ responseMimeType:"application/json", temperature:0.8, maxOutputTokens:4096 },
+          generationConfig:{ responseMimeType:"application/json", temperature:0.8, maxOutputTokens:b.platforms.length>2 ? 7000 : 3200 },
         }),
         cache:"no-store",
       });
-      if (!res.ok) return null;
+      if (!res.ok) {
+        const reason = res.status === 404 ? "model_unavailable" : res.status === 429 ? "provider_quota"
+          : res.status === 401 || res.status === 403 ? "access_denied" : "provider_error";
+        return { output:null,reason };
+      }
       const data: unknown = await res.json();
-      if (typeof data !== "object" || !data) return null;
+      if (typeof data !== "object" || !data) return { output:null,reason:"invalid_response" };
       const candidates = (data as {candidates?:Array<{content?:{parts?:Array<{text?:string}>}}>} ).candidates;
       const raw = candidates?.[0]?.content?.parts?.[0]?.text;
-      if (!raw || raw.length > 20000) return null;
+      if (!raw || raw.length > 40000) return { output:null,reason:"invalid_response" };
       const parsed: unknown = JSON.parse(raw);
-      if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return null;
+      if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return { output:null,reason:"invalid_response" };
       const output: Partial<Record<Platform, Content>> = {};
       for (const platform of b.platforms) {
         const value = (parsed as Record<string, unknown>)[platform];
         const safe = validContent(value, b, platform);
         if (safe) output[platform] = safe;
       }
-      return Object.keys(output).length ? output : null;
+      return Object.keys(output).length ? { output } : {output:null,reason:"invalid_response"};
     } finally { clearTimeout(timeout); }
-  } catch { return null; }
+  } catch (caught) { return {output:null,reason:caught instanceof Error && caught.name === "AbortError" ? "timeout" : "network_error"}; }
 }
 export async function respond(request: Request, all: boolean): Promise<NextResponse> {
   const origin = request.headers.get("origin");
@@ -130,13 +141,25 @@ export async function respond(request: Request, all: boolean): Promise<NextRespo
     // Regenerating one section uses the free fallback to avoid charging for tiny edits.
     const existingText = obj.existingText === undefined ? "" : obj.existingText;
     if (typeof existingText !== "string" || existingText.length > 1800) throw new InputError("Invalid existing draft");
-    const ai = await withGemini(modified, ip, section as Section | null, adjustment as Adjustment | null, existingText);
+    const aiAttempt = await withGemini(modified, ip, section as Section | null, adjustment as Adjustment | null, existingText);
+    const ai = aiAttempt.output;
     if (ai) for (const p of PLATFORMS) if (ai[p]) draft[p] = ai[p];
     if (section) for (const p of modified.platforms) draft[p] = adjust(draft[p]!, section as Section, adjustment as Adjustment | null);
     return NextResponse.json({
       results: draft,
       mode: ai ? "creative" : "offline",
-      warning: ai ? undefined : "Basic mode uses fixed writing rules. For genuinely original creative captions, the site owner must enable a server-side Gemini API key.",
+      warning: ai ? undefined : ({
+        not_configured:"Basic mode: Gemini is disabled or not configured for this deployment.",
+        local_limit:"Basic mode: this visitor's hourly AI request limit was reached.",
+        daily_limit:"Basic mode: the deployment's daily AI request budget was reached.",
+        access_denied:"Basic mode: Gemini rejected API credentials or model access. Check the API project and model permissions.",
+        model_unavailable:"Basic mode: this Gemini model is unavailable to the API project. Check the configured model.",
+        provider_quota:"Basic mode: the Gemini project quota was reached. Review your free-tier limits.",
+        provider_error:"Basic mode: the Gemini service returned an error.",
+        invalid_response:"Basic mode: Gemini returned an incomplete or incompatible draft.",
+        timeout:"Basic mode: Gemini did not respond before the deadline.",
+        network_error:"Basic mode: Gemini could not be reached.",
+      } as Record<string,string>)[aiAttempt.reason || "not_configured"],
     }, { headers: jsonHeaders });
   } catch (e) {
     if (e instanceof InputError) return error(e.message, 400);

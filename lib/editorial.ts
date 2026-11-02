@@ -1,4 +1,5 @@
 import type { Brief, Content, Platform } from "./gamecaptioner.ts";
+import { youtubeTitles } from "./youtube-titles.ts";
 
 type Angle = { hook: string; setup: string; payoff: string; overlay: string; extra?: string };
 function period(s:string):string { return /[.!?]$/.test(s) ? s : s + "."; }
@@ -91,7 +92,7 @@ export function writeBasicDraft(b:Brief,p:Platform,baseTags:string[]):Content {
   if(b.tone==="funny"){hooks[1]="That definitely was not the plan";hooks[2]="Well, this escalated";}
   if(b.tone==="cinematic"){hooks[1]="Everything came down to this";hooks[2]="One moment. One decision.";}
   if(b.tone==="hype"){hooks[1]="Wait for the payoff";hooks[2]="The moment everything changed";}
-  const titles=[0,1,2].map((_,i)=>cut(hooks[(i+b.variant)%3],p==="youtube"?100:110));
+  const titles=p==="youtube" ? youtubeTitles(b,a) : [0,1,2].map((_,i)=>cut(hooks[(i+b.variant)%3],110));
   const first=b.variant%3===0?a.hook:b.variant%3===1?a.payoff:a.setup;
   const ending=b.variant%3===0?a.payoff:b.variant%3===1?a.hook:a.payoff;
   const middle=[a.setup,a.extra].filter(Boolean).join(" ");

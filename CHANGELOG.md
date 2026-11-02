@@ -9,6 +9,8 @@
 - Added per-platform captions, three hooks, restrained tags, voiceover and overlays.
 - Updated rule-based fallback to synthesize gameplay angles rather than echoing entire user descriptions, including multiple genres and a multi-round C4 example.
 - Reworked Gemini prompt to create actual editorial copy and enabled AI-assisted individual-section refinement when configured. Basic mode now identifies its limitations in the UI.
+- Added dedicated YouTube headline generation using three distinct angles, with genre-aware details, concise game identifiers and variation on rewrite.
+- Updated the default Gemini model to 3.5 Flash-Lite, retained explicit allowlisted 2.5 compatibility, and added non-sensitive reasons when AI falls back.
 - Added an editable, responsive dark workspace with original geometric GC logo, Pacific Blue and Blaze Orange.
 - Added copy controls, full-post copy, CSV and TSV export with spreadsheet-formula escaping.
 - Added individual section rewriting, shortening, natural/funny adjustments and removable CTAs.

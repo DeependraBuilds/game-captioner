@@ -111,7 +111,7 @@ export default function Home() {
       const data = await response.json() as GenerateResponse & { error?:string };
       if (!response.ok || !data.results) throw new Error(data.error || "Generation failed.");
       setDrafts(data.results);setActive(wanted[0]);setMode(data.mode);
-      setNotice(data.mode === "creative" ? "AI-assisted creative draft ready. Review for accuracy before posting." : "Basic draft ready. This mode uses limited writing rules, not AI editorial rewriting.");
+      setNotice(data.mode === "creative" ? "AI-assisted creative draft ready. Review for accuracy before posting." : (data.warning || "Basic mode: editorial AI was unavailable."));
       setVariant(v => (v + 1) % 100);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not generate content.");
@@ -263,7 +263,7 @@ export default function Home() {
                         <button type="button" disabled={Boolean(refining)} onClick={()=>void refine(p,s,"regenerate")} title={"Regenerate "+s}>{refining===uid?"Working…":"↻ Rewrite"}</button>
                       </div></div>
                     <textarea id={uid} rows={s==="caption"?5:s==="voiceover"?4:s==="carousel"?5:lineSections.has(s)?3:2} value={text} onChange={e=>update(p,s,e.target.value)} />
-                    <div className="editor-bottom"><span>{s==="titles"?"One title per line":s==="hashtags"?"One hashtag per line":s==="onscreen"?"One overlay per line":s==="voiceover"?"Approx. "+duration+" sec target":text.length+" characters"}</span>
+                    <div className="editor-bottom"><span>{s==="titles"?(p==="youtube"?"In order: Search • Curiosity • Skill (100-character maximum)":"One title per line"):s==="hashtags"?"One hashtag per line":s==="onscreen"?"One overlay per line":s==="voiceover"?"Approx. "+duration+" sec target":text.length+" characters"}</span>
                       {(s==="caption"||s==="voiceover"||s==="titles") && <div className="quick-actions">
                         <button type="button" disabled={Boolean(refining)} onClick={()=>void refine(p,s,"shorter")}>Shorter</button>
                         <button type="button" disabled={Boolean(refining)||mode==="offline"} title={mode==="offline"?"Available with Creative AI mode":undefined} onClick={()=>void refine(p,s,"natural")}>More natural (AI)</button>
