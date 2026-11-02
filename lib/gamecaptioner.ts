@@ -102,14 +102,20 @@ export function validContent(value: unknown, b: Brief, p: Platform): Content | n
   void hashtags;
   const cleanTags = hashtagsFor(b,p);
   const backup = createFallback(b,p);
-  const safeField=(value:string, fallback:string):string =>
-    hasUnexpectedEastAsianScript(value,b) || unsupportedClaims(value,b).length ? fallback : value.trim();
+  const unsafeVoiceover=(text:string):boolean =>
+    /\b(?:like and subscribe|subscribe to (?:my|the|this) channel|follow (?:for|me for) more|check out (?:my|the) channel)\b/i.test(text);
+  const safeField=(value:string, fallback:string, kind:"general"|"voiceover"="general"):string =>
+    hasUnexpectedEastAsianScript(value,b) || unsupportedClaims(value,b).length ||
+      (kind==="voiceover" && unsafeVoiceover(value)) ? fallback : value.trim();
   const checkedTitles = titles.map((title,index) => safeField(title,backup.titles[index]));
   let cleanedCaption=hasUnexpectedEastAsianScript(caption,b)?backup.caption:groundedSentences(caption,b);
   // Light de-jargon pass. Do not invent information or flatten the chosen tone.
   cleanedCaption=cleanedCaption.replace(/\butilizing\b/gi,"using")
     .replace(/\babsolute precision\b/gi,"careful timing")
-    .replace(/\breliable pressure\b/gi,"pressure");
+    .replace(/\breliable pressure\b/gi,"pressure")
+    .replace(/\bexecuting a precise\b/gi,"making a precise")
+    .replace(/\bcapitalize on\b/gi,"use")
+    .replace(/\bThis gameplay highlights\b/gi,"This clip shows");
   const checkedCaption = p === "youtube"
     ? (adequateYouTubeDescription(cleanedCaption,b) ? cleanedCaption : backup.caption)
     : (cleanedCaption.trim() || backup.caption);
@@ -117,7 +123,7 @@ export function validContent(value: unknown, b: Brief, p: Platform): Content | n
     titles: checkedTitles.map(t => clip(t.trim(), p === "youtube" ? 100 : 110)),
     caption: checkedCaption,
     hashtags: cleanTags.length ? cleanTags : hashtagsFor(b, p),
-    voiceover: safeField(voiceover,backup.voiceover),
+    voiceover: safeField(voiceover,backup.voiceover,"voiceover"),
     onscreen: onscreen.map((line,i) => clip(safeField(line,backup.onscreen[i]||""),45)),
     cta: b.includeCTA ? safeField(cta,backup.cta) : "",
     carousel: b.includeCarousel ? carousel.map((line,i) => safeField(line,backup.carousel[i]||"")) : [],

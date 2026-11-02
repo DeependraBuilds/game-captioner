@@ -155,5 +155,6 @@ export function adequateYouTubeDescription(text:string,b:Brief):boolean {
   const paragraphs=cleaned.split(/\n\s*\n/).map(x=>x.trim()).filter(Boolean);
   // Length and structure are quality checks, never claims of guaranteed ranking.
   // Some clips are sparse: avoid padding with invented events to hit a word count.
-  return paragraphs.length>=2 && words(cleaned)>=65 && cleaned.toLocaleLowerCase("en").includes(b.game.toLocaleLowerCase("en"));
+  return paragraphs.length>=3 && paragraphs.every(paragraph=>words(paragraph)>=9) &&
+    words(cleaned)>=65 && cleaned.toLocaleLowerCase("en").includes(b.game.toLocaleLowerCase("en"));
 }

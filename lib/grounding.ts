@@ -15,6 +15,16 @@ const sharedRules:ClaimRule[]=[
  {output:/\b(?:throttle control|throttle management|throttle inputs?)\b/i,evidence:/\b(?:throttle|accelerat|gas pedal|power control)\b/i,label:"throttle technique"},
  {output:/\b(?:runner.up finish|finished second|came second)\b/i,evidence:/\b(?:runner.up|finished second|came second|second.place finish)\b/i,label:"race finishing position"},
  {output:/\b(?:the final straight|last straight)\b/i,evidence:/\b(?:straight|straightaway)\b/i,label:"race straight"},
+ {output:/\b(?:every single time|every time|always works|guaranteed (?:win|kill|result|success)|never fails|works every time)\b/i,evidence:/(?!)/,label:"unearned absolute"},
+ {output:/\b(?:only way to|only possible way to)\b/i,evidence:/(?!)/,label:"unearned certainty"},
+ {output:/\b(?:throttle discipline|throttle technique|throttle management|feather(?:ed|ing)? the throttle)\b/i,evidence:/\b(?:throttle|accelerat|gas pedal)\b/i,label:"throttle inputs"},
+ {output:/\b(?:apex|corner exit|exit from the slide|racing line|line through the turn)\b/i,evidence:/\b(?:apex|corner exit|exit|racing line|line through|corner line)\b/i,label:"specific racing line"},
+ {output:/\b(?:the opponent'?s|the leader'?s|an opponent'?s)\s+(?:tighter|wider|inside|outside|defensive|poor)\s+(?:racing )?line\b/i,evidence:/\b(?:opponent'?s|leader'?s|rival'?s)\s+(?:line|position|corner)\b/i,label:"opponent racing line"},
+ {output:/\b(?:high.speed drift|technical closing sections|technical corners|tight corners)\b/i,evidence:/\b(?:high.speed|technical|tight corners?)\b/i,label:"race speed or technical section"},
+ {output:/\b(?:timing line)\b/i,evidence:/(?!)/,label:"unfounded racing detail"},
+ {output:/\b(?:closing the gap|close the gap|carry momentum|maintain momentum|keeping momentum)\b/i,evidence:/\b(?:gap|momentum|carry speed)\b/i,label:"inferred race movement"},
+ {output:/\b(?:waiting out the timer|wait out the timer|let the timer run|running down the clock)\b/i,evidence:/\b(?:timer|clock|last\s+\d+\s+seconds?|final seconds|time ran out)\b/i,label:"timer tactic"},
+ {output:/\b(?:defensive and attacking scenarios|both attack and defense|on attack and defense)\b/i,evidence:/\b(?:both sides|attack and defense|defense and attack)\b/i,label:"both roles"},
  {output:/\b(?:without (?:ever )?exposing (?:myself|yourself)|without (?:a )?(?:direct )?gunfight)\b/i,evidence:/\b(?:without exposing|without (?:a )?gunfight|no gunfight|never saw)\b/i,label:"unseen engagement"},
 ];
 const siegeTerms=["Mira","Deimos","Castle","Valkyrie","Chalet","Oregon","Clubhouse","Coastline","Kafe","Bank","Border","Kitchen","Master Bedroom"];

@@ -28,6 +28,9 @@
 - Added bounded evidence guardrails against invented audio cues, ranked play, map/operator names, floor destruction, results, and kill totals; filters unsupported clauses and falls back to grounded copy when needed.
 - Replaced generic AI hashtags with game- and gameplay-specific verified hashtag sets across five platforms. YouTube shortening preserves searchable context and paragraph structure.
 
+- Tightened editorial quality checks after real Hype, Funny and Forza examples: unsupported universal claims, invented timer tactics, apex/racing lines, throttle control, race positions and other tactical assertions now trigger validation.
+- YouTube AI descriptions require three substantive paragraphs; otherwise the grounded format is used. Added a voiceover CTA check, extra anti-jargon guidance and source-specific regression tests for six failure scenarios.
+
 ### Known limitations
 
 - Template mode provides usable but less fluent prose than AI mode. It is not a trained language model.
