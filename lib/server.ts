@@ -37,7 +37,22 @@ function adjust(content: Content, section: Section | null, adjustment: Adjustmen
   if (section === "carousel") copy.carousel = copy.carousel.map(t => clip(t, 90));
   return copy;
 }
-type AiAttempt = { output: Partial<Record<Platform,Content>> | null; reason?: "not_configured" | "local_limit" | "daily_limit" | "access_denied" | "model_unavailable" | "provider_quota" | "provider_error" | "invalid_response" | "timeout" | "network_error" };
+type AiReason = "not_configured" | "local_limit" | "daily_limit" | "access_denied" | "model_unavailable" | "provider_quota" | "provider_error" | "invalid_response" | "timeout" | "network_error";
+type AiAttempt = { output: Partial<Record<Platform,Content>> | null; reason?: AiReason };
+function diagnostic(reason: AiReason, model: string, context: {phase: string; httpStatus?: number; errorCode?: string}): AiAttempt {
+  // Log only a constrained status/error code; never log the prompt, model output, credentials, or user IP.
+  console.warn("GameCaptioner AI fallback", {reason, model, phase:context.phase,
+    status:context.httpStatus, code:context.errorCode});
+  return {output:null,reason};
+}
+function networkCode(caught: unknown): string | undefined {
+  if (!(caught instanceof Error)) return undefined;
+  const cause = "cause" in caught ? (caught as Error & {cause?: unknown}).cause : undefined;
+  if (!cause || typeof cause !== "object" || !("code" in cause)) return undefined;
+  const code = (cause as {code?:unknown}).code;
+  const allowed = ["ENOTFOUND","EAI_AGAIN","ETIMEDOUT","ECONNRESET","ECONNREFUSED","UND_ERR_CONNECT_TIMEOUT","UND_ERR_SOCKET","CERT_HAS_EXPIRED","UNABLE_TO_VERIFY_LEAF_SIGNATURE"];
+  return typeof code === "string" && allowed.includes(code) ? code : undefined;
+}
 async function withGemini(b: Brief, client: string, section: Section | null, adjustment: Adjustment | null, existing: string): Promise<AiAttempt> {
   const apiKey = process.env.GEMINI_API_KEY;
   if (process.env.GEMINI_ENABLED !== "true" || !apiKey) return { output: null, reason: "not_configured" };
@@ -77,6 +92,7 @@ async function withGemini(b: Brief, client: string, section: Section | null, adj
     section && existing ? "Existing draft "+section+" to improve (untrusted): "+JSON.stringify(existing) : "",
     "Source brief: "+JSON.stringify(b),
   ].filter(Boolean).join("\n");
+  let phase = "request";
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), b.platforms.length > 2 ? 25000 : 18000);
@@ -86,31 +102,45 @@ async function withGemini(b: Brief, client: string, section: Section | null, adj
         headers:{ "Content-Type":"application/json", "x-goog-api-key":apiKey },
         body:JSON.stringify({
           contents:[{ parts:[{ text:prompt }] }],
-          generationConfig:{ responseMimeType:"application/json", temperature:0.8, maxOutputTokens:b.platforms.length>2 ? 7000 : 3200 },
+          generationConfig:{
+            responseMimeType:"application/json",
+            // Gemini 3 defaults to deeper thinking. Low is sufficient for concise creator copy.
+            ...(model.startsWith("gemini-3") ? {thinkingConfig:{thinkingLevel:"low"}} : {}),
+            maxOutputTokens:b.platforms.length>2 ? 7000 : 3600,
+          },
         }),
         cache:"no-store",
       });
       if (!res.ok) {
         const reason = res.status === 404 ? "model_unavailable" : res.status === 429 ? "provider_quota"
           : res.status === 401 || res.status === 403 ? "access_denied" : "provider_error";
-        return { output:null,reason };
+        return diagnostic(reason,model,{phase:"http",httpStatus:res.status});
       }
-      const data: unknown = await res.json();
-      if (typeof data !== "object" || !data) return { output:null,reason:"invalid_response" };
+      phase = "response_body";
+      let data: unknown;
+      try { data = await res.json(); }
+      catch { return diagnostic("invalid_response",model,{phase}); }
+      if (typeof data !== "object" || !data) return diagnostic("invalid_response",model,{phase:"response_shape"});
       const candidates = (data as {candidates?:Array<{content?:{parts?:Array<{text?:string}>}}>} ).candidates;
       const raw = candidates?.[0]?.content?.parts?.[0]?.text;
-      if (!raw || raw.length > 40000) return { output:null,reason:"invalid_response" };
-      const parsed: unknown = JSON.parse(raw);
-      if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return { output:null,reason:"invalid_response" };
+      if (!raw || raw.length > 40000) return diagnostic("invalid_response",model,{phase:"candidate_text"});
+      phase = "candidate_json";
+      let parsed: unknown;
+      try {parsed = JSON.parse(raw);}
+      catch {return diagnostic("invalid_response",model,{phase});}
+      if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return diagnostic("invalid_response",model,{phase:"candidate_shape"});
       const output: Partial<Record<Platform, Content>> = {};
       for (const platform of b.platforms) {
         const value = (parsed as Record<string, unknown>)[platform];
         const safe = validContent(value, b, platform);
         if (safe) output[platform] = safe;
       }
-      return Object.keys(output).length ? { output } : {output:null,reason:"invalid_response"};
+      return Object.keys(output).length ? { output } : diagnostic("invalid_response",model,{phase:"draft_validation"});
     } finally { clearTimeout(timeout); }
-  } catch (caught) { return {output:null,reason:caught instanceof Error && caught.name === "AbortError" ? "timeout" : "network_error"}; }
+  } catch (caught) {
+    const reason = caught instanceof Error && (caught.name === "AbortError" || caught.name === "TimeoutError") ? "timeout" : "network_error";
+    return diagnostic(reason,model,{phase,errorCode:reason === "network_error" ? networkCode(caught) : undefined});
+  }
 }
 export async function respond(request: Request, all: boolean): Promise<NextResponse> {
   const origin = request.headers.get("origin");

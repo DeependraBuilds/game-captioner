@@ -19,6 +19,8 @@
 - Updated Next.js to 16.4.3 to address October 2026 critical security advisories.
 - Added regression tests for five platforms, genre variation, input rejection and character constraints.
 
+- Fixed AI fallback diagnostics so malformed model JSON is not incorrectly reported as a network failure; added safe diagnostic phases and low Gemini 3 thinking for faster generation.
+
 ### Known limitations
 
 - Template mode provides usable but less fluent prose than AI mode. It is not a trained language model.
