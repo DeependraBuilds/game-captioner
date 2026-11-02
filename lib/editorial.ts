@@ -102,7 +102,7 @@ export function writeBasicDraft(b:Brief,p:Platform,baseTags:string[]):Content {
   if(b.tone==="hype"){hooks[1]="Wait for the payoff";hooks[2]="The moment everything changed";}
   const momentHooks=momentTitleHooks(b);
   const titles=p==="youtube" ? youtubeTitles(b,a).map((title,i)=>toneTitle(title,b,i)) :
-    momentHooks ? momentHooks.map(t=>cut(t,110)) : [0,1,2].map((_,i)=>cut(hooks[(i+b.variant)%3],110));
+    momentHooks ? [0,1,2].map(i=>cut(momentHooks[(i+b.variant)%3],110)) : [0,1,2].map((_,i)=>cut(hooks[(i+b.variant)%3],110));
   const first=b.variant%3===0?a.hook:b.variant%3===1?a.payoff:a.setup;
   const ending=b.variant%3===0?a.payoff:b.variant%3===1?a.hook:a.payoff;
   const middle=[a.setup,a.extra].filter(Boolean).join(" ");
@@ -137,10 +137,18 @@ export function writeBasicDraft(b:Brief,p:Platform,baseTags:string[]):Content {
     const opponent=/\bleader\b/i.test(source)?"the leader":"another car";
     const pay=passed?"I passed "+opponent+" right before the finish.":"That final drift was the highlight.";
     const key=position+" I held the drift through the turn. "+pay;
-    captions.tiktok=(position+" Held the drift. "+pay+" "+b.game).trim();
+    const toneClose:Record<Brief["tone"],string>={
+      hype:passed?"Right at the finish!":"That last turn!",
+      funny:passed?"The corner had one more surprise.":"The corner did its job.",
+      competitive:passed?"That late move changed the position.":"The drift was the payoff.",
+      tactical:passed?"The pass happened after the held drift.":"The drift defined the move.",
+      casual:passed?"That was worth saving.":"Had to keep that clip.",
+      cinematic:passed?"One turn, and the position changed.":"One corner became the moment.",
+    };
+    captions.tiktok=(position+" Held the drift. "+pay+" "+toneClose[b.tone]+" "+b.game).trim();
     captions.instagram=(position+"\n\nI held the drift through the turn and "+(passed?"passed "+opponent+" just before the finish.":"made the final corner the highlight.")+"\n\n"+b.game+".").trim();
     captions.facebook=(b.game+": "+key).trim();
-    captions.twitter=cut(b.game+": "+key,210);
+    captions.twitter=cut(b.game+": "+position+" Held the drift; "+pay+" "+toneClose[b.tone],210);
   }
   // Target is approximate. Do not invent facts or pad scripts to fill 30 seconds.
   const ordered=toneVoice(b,a);
