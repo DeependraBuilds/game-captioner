@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from "next/server.js";
 import {
   InputError, parseBrief, createFallback, validContent, clip, PLATFORMS,
   type Brief, type Platform, type Content, type Section, type Adjustment,

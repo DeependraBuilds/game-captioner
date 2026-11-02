@@ -30,7 +30,7 @@ test("supports five platforms with different copy for six genres", () => {
     assert.ok(results[0].titles.every(t => t.length <= 100));
   }
 });
-test("rejects invalid payloads and platforms, including removed platform", () => {
+test("rejects invalid payloads and platforms, including unsupported values", () => {
   assert.throws(() => parseBrief({game:"Test", description:"A solid detailed gameplay moment.", platform:"linkedin"}));
   assert.throws(() => parseBrief({game:"Test",description:"short"}));
   assert.throws(() => parseBrief({game:"Test",description:"An ordinary gameplay moment.",tone:"invalid"}));

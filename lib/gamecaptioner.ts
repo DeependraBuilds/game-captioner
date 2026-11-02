@@ -129,7 +129,17 @@ function voiceoverFor(b: Brief): string {
     casual: "That's why I had to share this.",
     cinematic: "And that's the moment I won't forget.",
   };
-  const base = [openings[b.tone], moment, detail, endings[b.tone]].filter(Boolean);
+  const alternativeOpenings: Record<Tone, string> = {
+    hype:"And then this happened.", funny:"I really should have seen this coming.",
+    competitive:"Here's the key moment.", tactical:"Look closely at the setup.",
+    casual:"So, here's the clip.", cinematic:"Then everything shifted.",
+  };
+  const alternativeEndings: Record<Tone, string> = {
+    hype:"What a finish.", funny:"That was not how I expected it to go.",
+    competitive:"The timing told the story.", tactical:"That is the part to notice.",
+    casual:"I wanted to keep that moment.", cinematic:"Some moments stick with you.",
+  };
+  const base = [b.variant % 2 ? alternativeOpenings[b.tone] : openings[b.tone], moment, detail, b.variant % 2 ? alternativeEndings[b.tone] : endings[b.tone]].filter(Boolean);
   // Duration is a target, not an excuse to fabricate gameplay events.
   const wordLimit = Math.round(b.duration * 2.35);
   const selected: string[] = [];
@@ -148,7 +158,7 @@ function captionFor(b: Brief, platform: Platform, hooks: string[]): string {
   const audience = b.audience ? "For " + b.audience + ": " : "";
   const customLead = b.variant % 2 === 0 ? hooks[0] : hooks[1];
   if (platform === "youtube") {
-    return clip(customLead + ".\n\n" + moment + (extra ? "\n" + extra : "") + (b.tone === "tactical" ? "\nHere's the moment worth watching closely." : ""), 1700);
+    return clip(customLead + ".\n\nWatch this " + b.game + " " + b.contentType + ": " + moment + (extra ? "\n" + extra : "") + (b.tone === "tactical" ? "\nHere is the decision worth watching closely." : ""), 1700);
   }
   if (platform === "tiktok") {
     return clip(customLead + ". " + moment + (extra ? " " + extra : ""), 360);
@@ -171,7 +181,7 @@ function ctaFor(b: Brief, p: Platform): string {
     facebook: "Follow the page for more gaming moments.",
     twitter: "Follow for more game clips.",
   };
-  return phrases[p];
+  return b.variant % 2 ? "More " + b.game + " moments coming soon." : phrases[p];
 }
 export function createFallback(b: Brief, platform: Platform): Content {
   const titles = hookSet(b);
