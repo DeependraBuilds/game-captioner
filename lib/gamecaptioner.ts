@@ -170,7 +170,7 @@ function captionFor(b: Brief, platform: Platform, hooks: string[]): string {
     return clip(audience + moment + (extra ? "\n\n" + extra : "") + "\n\n" + (b.tone === "tactical" ? "The interesting part is how the moment developed." : "One of those gaming moments I wanted to share."), 1500);
   }
   const tagLength = hashtagsFor(b, platform).join(" ").length + 2;
-  return clip((b.variant % 2 ? customLead + ". " : "") + moment + (extra ? " " + extra : ""), 280 - tagLength);
+  return clip(b.game + ": " + (b.variant % 2 ? customLead + ". " : "") + moment + (extra ? " " + extra : ""), 280 - tagLength);
 }
 function ctaFor(b: Brief, p: Platform): string {
   if (!b.includeCTA) return "";
