@@ -111,3 +111,22 @@ form>input,form>textarea{margin-bottom:20px}
 .site-footer p{max-width:440px;text-align:right;line-height:1.6}
 @media (max-width:1030px){.workspace{grid-template-columns:1fr}.input-panel form{display:block}.intro{padding-top:40px}.output-panel{min-height:440px}}
 @media (max-width:650px){.site-header-inner{min-height:72px;padding:12px 16px}.brand{font-size:19px}.brand img{width:36px;height:36px}.brand small{font-size:8px;letter-spacing:1.7px}.header-pill{display:none}.header-right{font-size:11px}.main-wrap{padding:0 14px}.intro{padding:30px 4px}.intro h1{letter-spacing:-1.6px}.intro p{font-size:14px}.intro-stats{gap:12px}.panel-heading,.input-panel form,.result-content{padding:19px}.field-pair{grid-template-columns:1fr}.tone-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.platform-choices{grid-template-columns:repeat(2,minmax(0,1fr))}.generate-actions{grid-template-columns:1fr}.results-toolbar{padding:17px 19px}.result-tabs{padding:0 18px 15px}.empty-state{padding:55px 16px}.site-footer{flex-direction:column;align-items:flex-start}.site-footer p{text-align:left}}
+
+
+/* Searchable, keyboard-friendly game catalog. Keep the dropdown within the input panel. */
+.game-selector{position:relative;margin-bottom:21px}
+.game-selector-field{position:relative}
+.game-selector-field input{padding-right:48px}
+.game-selector-toggle{position:absolute;right:5px;top:5px;bottom:5px;width:39px;border:0;border-left:1px solid #314766;border-radius:0 7px 7px 0;background:transparent;color:#9bcaf0;font-size:22px}
+.game-selector-toggle:hover{color:var(--orange)}
+.game-selector-help{font-size:10px;color:#91a7c5;margin:8px 1px 0}
+.game-selector-menu{position:absolute;z-index:20;left:0;right:0;top:calc(100% - 15px);max-height:320px;overflow-y:auto;overscroll-behavior:contain;background:#101d31;border:1px solid #4776a1;border-radius:10px;box-shadow:0 24px 50px #030913e0}
+.game-selector-menu-heading{position:sticky;top:0;z-index:1;padding:10px 13px;background:#152840;display:flex;justify-content:space-between;gap:10px;letter-spacing:1.3px;font-size:9px;font-weight:800;color:#9fcdf7}
+.game-selector-menu-heading span+span{font-weight:600;letter-spacing:0;color:#90a7c4}
+.game-selector-option{display:flex;justify-content:space-between;align-items:center;gap:12px;text-align:left;width:100%;padding:11px 13px;background:transparent;border:0;border-bottom:1px solid #263850;color:#edf5ff;font-size:12px}
+.game-selector-option:hover,.game-selector-option.is-active{background:#1b4268;color:white}
+.game-selector-title{font-weight:750;min-width:0;overflow-wrap:anywhere}
+.game-selector-category{font-size:10px;color:#9db6d1;flex-shrink:0;text-align:right;max-width:43%}
+.game-selector-no-results{font-size:12px;line-height:1.5;color:#bfcee3;padding:15px;overflow-wrap:anywhere}
+.game-selector-menu-footer{position:sticky;bottom:0;background:#14253b;font-size:10px;color:#b1c7e1;line-height:1.5;padding:10px 13px;border-top:1px solid #31506d}
+@media (max-width:650px){.game-selector-option{align-items:flex-start;flex-direction:column;gap:4px}.game-selector-category{max-width:none;text-align:left}.game-selector-menu{max-height:290px}}

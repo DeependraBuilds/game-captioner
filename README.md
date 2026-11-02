@@ -24,7 +24,7 @@ Run `npm run lint`, `npm run typecheck`, `npm test` and `npm run build` to valid
 
 | Field | Purpose |
 | --- | --- |
-| Game | The actual game, not a hardcoded default |
+| Game | Searchable catalog of 223 curated titles, with an unrestricted custom game input and aliases |
 | Gameplay description | Main event, in your own words (required) |
 | Notable moment | Optional extra detail |
 | Audience | Optional context |
@@ -32,6 +32,10 @@ Run `npm run lint`, `npm run typecheck`, `npm test` and `npm run build` to valid
 | Tone | Hype, funny, competitive, tactical, casual, cinematic |
 | Voiceover target | 10, 20 or 30 seconds |
 | Platforms | One or several, or all five |
+
+## Game search
+
+The game selector opens a dropdown of popular picks, then searches 223 curated games from shooters, RPGs, sports/racing/fighting, strategy, survival/horror, indie/cozy and MMO/mobile. Common shortcuts like `R6`, `CS2`, `GTA 5`, `FC26` and `OSRS` work. Use arrow keys, Enter or touch/click to select. **Any title not listed can be typed directly**, so the catalog never restricts generation. The static list lives in `lib/game-catalog.ts` and can be updated without an API or subscription. It is a discovery list, not a live popularity ranking.
 
 ## Export fields
 
@@ -62,6 +66,8 @@ If disabled, rate limited, unreachable or invalid, template mode remains availab
 ## Structure
 
 - `lib/gamecaptioner.ts`: shared platforms, validation, template generation and result contracts
+- `lib/game-catalog.ts`: grouped catalog, aliases and ranked text matching
+- `components/game-selector.tsx`: searchable game combobox with custom-title support
 - `lib/server.ts`: request security, generation endpoint and optional model provider
 - `app/api/generate`: selected platform(s)
 - `app/api/generate-all`: all platforms

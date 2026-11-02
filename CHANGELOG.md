@@ -5,6 +5,7 @@
 - Removed the business-network platform across frontend, API, types, documentation and tests. TikTok is now supported end-to-end.
 - Added a single typed, validated engine for five gaming channels, all genres and six tones.
 - Added game/description/optional details, voiceover targets, CTA and carousel controls.
+- Replaced the plain game field with a searchable dropdown of 223 curated titles plus unrestricted custom entries, aliases and keyboard navigation.
 - Added per-platform captions, three hooks, restrained tags, voiceover and overlays.
 - Added an editable, responsive dark workspace with original geometric GC logo, Pacific Blue and Blaze Orange.
 - Added copy controls, full-post copy, CSV and TSV export with spreadsheet-formula escaping.

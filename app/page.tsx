@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { GameSelector } from "@/components/game-selector";
 import {
   PLATFORMS, PLATFORM_NAMES, TONES, CONTENT_TYPES, publishText,
   type Platform, type Content, type Section, type Adjustment,
@@ -175,7 +176,7 @@ export default function Home() {
           </div>
           <form onSubmit={e => {e.preventDefault();void generate(false);}}>
             <label className="field-label" htmlFor="game">Game title <span className="required">*</span></label>
-            <input id="game" maxLength={80} value={game} onChange={e=>setGame(e.target.value)} placeholder="What game are you playing?" />
+            <GameSelector value={game} onChange={setGame} />
             <label className="field-label" htmlFor="description">Describe the gameplay <span className="required">*</span></label>
             <textarea id="description" rows={5} maxLength={1800} value={description} onChange={e=>setDescription(e.target.value)} placeholder="What happened in the clip? Tell it like you'd tell a teammate or friend." />
             <div className="input-hint"><span>Natural language works best. No keywords needed.</span><span>{description.length}/1800</span></div>
