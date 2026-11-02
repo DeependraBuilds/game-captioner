@@ -1,4 +1,5 @@
 import type {Brief} from "./gamecaptioner.ts";
+import { ungroundedMomentClaims } from "./moment-accuracy.ts";
 
 type ClaimRule = { output:RegExp; evidence:RegExp; label:string };
 const sharedRules:ClaimRule[]=[
@@ -72,7 +73,7 @@ export function unsupportedClaims(text:string,b:Brief):string[] {
  const racing=/\b(?:race|racing|drift\w*|overtak\w*|corner|car|finish line|racer|slid|slide)\b/i.test(evidence);
  const rules=[...sharedRules,...(racing?racingRules:[]),...siegeRules(b)];
  const warnings=rules.filter(item=>item.output.test(text) && !item.evidence.test(evidence)).map(item=>item.label);
- return [...new Set([...warnings,...killRule(text,evidence)])];
+ return [...new Set([...warnings,...killRule(text,evidence),...ungroundedMomentClaims(text,b)])];
 }
 export function groundedSentences(text:string,b:Brief):string {
  return text.split(/\n\s*\n/).map(paragraph=>{

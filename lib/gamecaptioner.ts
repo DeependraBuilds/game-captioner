@@ -5,6 +5,7 @@ import { unsupportedClaims, groundedSentences } from "./grounding.ts";
 import { racingCaptionIsGrounded } from "./racing-description.ts";
 import { editorialWarnings, preserveGroundedParagraphs } from "./editorial-quality.ts";
 import { voiceoverHasKeyAction } from "./moment-beats.ts";
+import { missingCoreMoment } from "./moment-accuracy.ts";
 
 export const PLATFORMS = ["youtube", "tiktok", "instagram", "facebook", "twitter"] as const;
 export type Platform = (typeof PLATFORMS)[number];
@@ -127,7 +128,8 @@ export function validContent(value: unknown, b: Brief, p: Platform): Content | n
     hasUnexpectedEastAsianScript(value,b) || unsupportedClaims(value,b).length || editorialWarnings(value,b).length ||
       (kind==="voiceover" && unsafeVoiceover(value)) ? fallback : value.trim();
   const checkedTitles = titles.map((title,index) =>
-    /^The Read Behind (?:One|The|This)\b.*\b(?:Saved|Changed|Won)\b/i.test(title)
+    (/^The Read Behind (?:One|The|This)\b.*\b(?:Saved|Changed|Won)\b/i.test(title) ||
+     /^(?:The detail that changed this play|What made this moment work)$/i.test(title))
       ? backup.titles[index] : safeField(title,backup.titles[index]));
   const withoutTags=captionWithoutDuplicateTags(caption,cleanTags);
   let cleanedCaption=hasUnexpectedEastAsianScript(withoutTags,b)?backup.caption:
@@ -141,15 +143,16 @@ export function validContent(value: unknown, b: Brief, p: Platform): Content | n
     .replace(/\bcapitalize on\b/gi,"use")
     .replace(/\bThis gameplay highlights\b/gi,"This clip shows");
   const checkedCaption = p === "youtube"
-    ? (adequateYouTubeDescription(cleanedCaption,b) && racingCaptionIsGrounded(cleanedCaption,b) ? cleanedCaption : backup.caption)
-    : (cleanedCaption.trim() || backup.caption);
+    ? (adequateYouTubeDescription(cleanedCaption,b) && racingCaptionIsGrounded(cleanedCaption,b) && !missingCoreMoment(cleanedCaption,b) ? cleanedCaption : backup.caption)
+    : (cleanedCaption.trim() && !missingCoreMoment(cleanedCaption,b) ? cleanedCaption : backup.caption);
   const safeOverlays=onscreen.map((line,i)=>clip(safeField(line,backup.onscreen[i]||""),45));
   const groundedOverlays=voiceoverHasKeyAction(safeOverlays.join(" "),b)
     ? safeOverlays : backup.onscreen;
   const cleanCarousel=carousel.map((line,i)=>safeField(line,backup.carousel[i]||""));
   const carouselIdeas=cleanCarousel.map(line=>line.replace(/^[^:]{1,30}:\s*/,"").trim().toLowerCase());
   const distinctCarousel=carouselIdeas.filter(Boolean).length>=3 &&
-    new Set(carouselIdeas.filter(Boolean)).size===carouselIdeas.filter(Boolean).length;
+    new Set(carouselIdeas.filter(Boolean)).size===carouselIdeas.filter(Boolean).length &&
+    !missingCoreMoment(cleanCarousel.join(" "),b);
   const prepared: Content = {
     titles: checkedTitles.map(t => clip(t.trim(), p === "youtube" ? 100 : 110)),
     caption: checkedCaption,

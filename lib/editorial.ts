@@ -2,7 +2,7 @@ import type { Brief, Content, Platform } from "./gamecaptioner.ts";
 import { youtubeTitles } from "./youtube-titles.ts";
 import { basicYouTubeDescription } from "./youtube-description.ts";
 import { toneNarrative, toneTitle, toneVoice } from "./tone-guide.ts";
-import { momentBeats } from "./moment-beats.ts";
+import { momentBeats, momentTitleHooks } from "./moment-beats.ts";
 
 type Angle = { hook: string; setup: string; payoff: string; overlay: string; extra?: string };
 function period(s:string):string { return /[.!?]$/.test(s) ? s : s + "."; }
@@ -100,7 +100,9 @@ export function writeBasicDraft(b:Brief,p:Platform,baseTags:string[]):Content {
   if(b.tone==="funny"){hooks[1]="That definitely was not the plan";hooks[2]="Well, this escalated";}
   if(b.tone==="cinematic"){hooks[1]="Everything came down to this";hooks[2]="One moment. One decision.";}
   if(b.tone==="hype"){hooks[1]="Wait for the payoff";hooks[2]="The moment everything changed";}
-  const titles=p==="youtube" ? youtubeTitles(b,a).map((title,i)=>toneTitle(title,b,i)) : [0,1,2].map((_,i)=>cut(hooks[(i+b.variant)%3],110));
+  const momentHooks=momentTitleHooks(b);
+  const titles=p==="youtube" ? youtubeTitles(b,a).map((title,i)=>toneTitle(title,b,i)) :
+    momentHooks ? momentHooks.map(t=>cut(t,110)) : [0,1,2].map((_,i)=>cut(hooks[(i+b.variant)%3],110));
   const first=b.variant%3===0?a.hook:b.variant%3===1?a.payoff:a.setup;
   const ending=b.variant%3===0?a.payoff:b.variant%3===1?a.hook:a.payoff;
   const middle=[a.setup,a.extra].filter(Boolean).join(" ");
@@ -124,6 +126,21 @@ export function writeBasicDraft(b:Brief,p:Platform,baseTags:string[]):Content {
     captions.instagram=(bossScene+"\n\n"+b.game+".").trim();
     captions.facebook=(b.game+" boss fight: "+bossScene).trim();
     captions.twitter=cut(b.game+": "+bossScene,210);
+  }
+  const racingBeats=momentBeats(b);
+  const racingClip=/\b(?:drift\w*|slide|slid)\b/i.test(source) &&
+    /\b(?:last|final)\s+(?:corner|turn|bend)\b/i.test(source);
+  if(racingClip && racingBeats) {
+    const position=/\b(?:in|from|entered in|entering in)\s+(?:second|2nd)\b/i.test(source)
+      ? "I entered the last corner in second place." : "The race came down to the final turn.";
+    const passed=/\b(?:pass(?:ed|ing)?|overtak\w*|overtook|went past|got past)\b/i.test(source);
+    const opponent=/\bleader\b/i.test(source)?"the leader":"another car";
+    const pay=passed?"I passed "+opponent+" right before the finish.":"That final drift was the highlight.";
+    const key=position+" I held the drift through the turn. "+pay;
+    captions.tiktok=(position+" Held the drift. "+pay+" "+b.game).trim();
+    captions.instagram=(position+"\n\nI held the drift through the turn and "+(passed?"passed "+opponent+" just before the finish.":"made the final corner the highlight.")+"\n\n"+b.game+".").trim();
+    captions.facebook=(b.game+": "+key).trim();
+    captions.twitter=cut(b.game+": "+key,210);
   }
   // Target is approximate. Do not invent facts or pad scripts to fill 30 seconds.
   const ordered=toneVoice(b,a);

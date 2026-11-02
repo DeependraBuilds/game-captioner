@@ -62,6 +62,12 @@ YouTube receives its own **multi-paragraph video description**, rather than a Ti
 
 **Search optimization is not a ranking guarantee.** YouTube's own guidance prioritizes accurate, unique descriptions and relevant search terms. Hashtags are separate from the description and users can edit everything.
 
+## Follow-up export integrity: accurate stakes and complete social captions
+
+After reviewing a second Hades/Forza pair of all-platform CSV exports, the shared validator now treats vague low health separately from **exact one-hit stakes**, and rejects unsourced boss phases, implied restarts, narrowly timed dodges and exclusive escape strategies. Statements remain available when the creator specifically supplies those details. These checks apply to model-written titles, captions, voiceovers, overlays and optional carousel beats.
+
+For short boss-dodge and final-corner-overtake clips, platform captions should retain the confirmed central action and outcome. If a model-written Instagram or TikTok caption drops the verified overtake or escape, the application substitutes a source-grounded platform-specific caption. Non-YouTube Basic titles for these common moments now use three specific gaming hooks rather than generic placeholders. Exports preserve their established eleven fields.
+
 ## Cross-platform package integrity
 
 GameCaptioner now checks the whole editable draft, not just YouTube descriptions. A caption containing only the same hashtags already supplied separately is treated as missing copy and replaced with grounded text. Trailing duplicate hashtag tokens are removed from copy-ready posts and CSV/TSV caption cells, while the independent hashtag field remains intact. The eleven-column CSV export schema is unchanged.

@@ -75,3 +75,25 @@ export function voiceoverHasKeyAction(text:string,b:Brief):boolean {
   }
   return true;
 }
+
+export function momentTitleHooks(b:Brief):[string,string,string]|null{
+ const source=sourceOf(b);
+ if(/\bboss\b/i.test(source)&&/\b(?:dodg\w*|evad\w*)\b/i.test(source)){
+   const low=/\b(?:low health|barely any health|almost no health|1 hp|one hp)\b/i.test(source);
+   const out=/\b(?:escap\w*|surviv\w*|made it out)\b/i.test(source);
+   return [
+    (low?"Low-Health Boss Dodge":"Boss Attack Dodge")+" | "+b.game,
+    (out?"The Dodge Before the Escape":"The Dodge That Changed the Fight")+" | "+b.game,
+    (out?"Escaping After the Boss Dodge":"The Boss Attack I Dodged")+" | "+b.game,
+   ];
+ }
+ const f=racingFacts(b);
+ if(f.finalCorner&&f.drift){
+   return [
+    (f.passed?"Last-Corner Overtake":"Final-Corner Drift")+" | "+b.game,
+    (f.passed?"A Drift That Turned Into a Pass":"Holding the Final Turn")+" | "+b.game,
+    (f.passed?(f.second?"Second Place to a Late Pass":"A Late Pass at the Finish"):"The Drift at the Finish")+" | "+b.game,
+   ];
+ }
+ return null;
+}

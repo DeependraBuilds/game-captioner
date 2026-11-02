@@ -61,6 +61,10 @@
 - Added source-driven boss and racing voiceovers, short overlays, and distinct carousel beats. Replaced generic boss social captions and malformed tactical title prefixes. Validates that AI voiceovers mention explicit key gameplay actions.
 - Added tests for all five platform exports, X post integrity, Hades action-based voiceovers/overlays, distinct carousels and unsupported podium or full-race claims.
 
+- Audited a new two-file, ten-platform CSV sample. X captions were populated and duplicate-free, but Hades still turned low health into exact one-hit stakes, added an invented boss phase or restart condition, and Forza Instagram omitted the verified overtake.
+- Added cross-field boss-stakes checks and core-action completeness checks for boss-dodge/escape and late-drift/overtake clips. Updated grounded social captions and non-YouTube titles, without changing export schema or provider request count.
+- Added regression tests based on the latest Hades and Forza exports. Removed unsupported details while preserving explicitly supplied mechanics.
+
 ### Known limitations
 
 - Template mode provides usable but less fluent prose than AI mode. It is not a trained language model.
