@@ -2,6 +2,7 @@ import { writeBasicDraft } from "./editorial.ts";
 import { adequateYouTubeDescription, hasUnexpectedEastAsianScript } from "./youtube-description.ts";
 import { relevantHashtags } from "./hashtag-strategy.ts";
 import { unsupportedClaims, groundedSentences } from "./grounding.ts";
+import { racingCaptionIsGrounded } from "./racing-description.ts";
 
 export const PLATFORMS = ["youtube", "tiktok", "instagram", "facebook", "twitter"] as const;
 export type Platform = (typeof PLATFORMS)[number];
@@ -25,7 +26,7 @@ export type Content = {
   titles: string[]; caption: string; hashtags: string[];
   voiceover: string; onscreen: string[]; cta: string; carousel: string[];
 };
-export type GenerateResponse = { results: Partial<Record<Platform, Content>>; mode: "creative" | "offline"; warning?: string };
+export type GenerateResponse = { results: Partial<Record<Platform, Content>>; mode: "creative" | "offline"; captionSources?: Partial<Record<Platform,"ai"|"grounded">>; warning?: string };
 
 export class InputError extends Error {}
 
@@ -125,7 +126,7 @@ export function validContent(value: unknown, b: Brief, p: Platform): Content | n
     .replace(/\bcapitalize on\b/gi,"use")
     .replace(/\bThis gameplay highlights\b/gi,"This clip shows");
   const checkedCaption = p === "youtube"
-    ? (adequateYouTubeDescription(cleanedCaption,b) ? cleanedCaption : backup.caption)
+    ? (adequateYouTubeDescription(cleanedCaption,b) && racingCaptionIsGrounded(cleanedCaption,b) ? cleanedCaption : backup.caption)
     : (cleanedCaption.trim() || backup.caption);
   const prepared: Content = {
     titles: checkedTitles.map(t => clip(t.trim(), p === "youtube" ? 100 : 110)),

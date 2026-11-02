@@ -93,6 +93,7 @@ export default function Home() {
   const [error,setError] = useState("");
   const [notice,setNotice] = useState("");
   const [mode,setMode] = useState<"offline"|"creative">("offline");
+  const [captionSources,setCaptionSources] = useState<Partial<Record<Platform,"ai"|"grounded">>>({});
   const [variant,setVariant] = useState(0);
   const selectedResults = PLATFORMS.filter(p => Boolean(drafts[p]));
   const hasResults = selectedResults.length > 0;
@@ -119,7 +120,7 @@ export default function Home() {
       });
       const data = await response.json() as GenerateResponse & { error?:string };
       if (!response.ok || !data.results) throw new Error(data.error || "Generation failed.");
-      setDrafts(data.results);setActive(wanted[0]);setMode(data.mode);setDraftTone(tone);
+      setDrafts(data.results);setActive(wanted[0]);setMode(data.mode);setDraftTone(tone);setCaptionSources(data.captionSources||{});
       setNotice(data.mode === "creative" ? "AI-assisted draft ready. Some sections may use grounded copy when AI adds unsupported details. Review before posting." : (data.warning || "Basic mode: editorial AI was unavailable."));
       setVariant(v => (v + 1) % 100);
     } catch (e) {
@@ -251,7 +252,7 @@ export default function Home() {
           </div> : <>
             <div className="results-toolbar">
               <div className="result-meta"><span className="live-dot"/>{selectedResults.length} platform draft{selectedResults.length===1?"":"s"}
-                <span className="mode-label">{mode==="creative"?"AI-assisted":"Basic mode"}</span><span className="draft-tone">Draft tone: {draftTone ? draftTone.charAt(0).toUpperCase()+draftTone.slice(1) : "Unknown"}</span></div>
+                <span className="mode-label">{mode==="creative"?"AI-assisted":"Basic mode"}</span><span className="draft-tone">Draft tone: {draftTone ? draftTone.charAt(0).toUpperCase()+draftTone.slice(1) : "Unknown"}</span><span className="draft-tone">Description: {captionSources[active]==="ai"?"AI-written":"Grounded fallback"}</span></div>
               <DownloadButtons drafts={drafts} game={game}/>
             </div>
             <div className="result-tabs" role="tablist" aria-label="Generated platforms">

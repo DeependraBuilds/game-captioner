@@ -236,8 +236,14 @@ export async function respond(request: Request, all: boolean): Promise<NextRespo
     const ai = aiAttempt.output;
     if (ai) for (const p of PLATFORMS) if (ai[p]) draft[p] = ai[p];
     if (section) for (const p of modified.platforms) draft[p] = adjust(draft[p]!, section as Section, adjustment as Adjustment | null,p);
+    const captionSources:Partial<Record<Platform,"ai"|"grounded">>={};
+    for(const p of modified.platforms){
+      const fallback=createFallback(modified,p);
+      captionSources[p]=ai?.[p] && draft[p]?.caption.trim()!==fallback.caption.trim()?"ai":"grounded";
+    }
     return NextResponse.json({
       results: draft,
+      captionSources,
       mode: ai ? "creative" : "offline",
       warning: ai ? undefined : ({
         not_configured:"Basic mode: Gemini is disabled or not configured for this deployment.",

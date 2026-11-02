@@ -42,6 +42,10 @@
 - Hardened race-specific AI validation against invented braking zones, walls/scenery, opponent tracking, speed claims, risk, and false timing precision. Added five regression tests covering the reported Hype/Funny outputs and Tactical fallback.
 - Updated Gemini voice guidance so source-check instructions never become published copy.
 
+- Reworked the six racing-tone fallback narratives to reduce repetitive SEO boilerplate while keeping a confirmed final-corner pass in the copy.
+- Added a focused quality gate for unsupported general coaching and lost racing outcomes, plus user-visible per-description AI/fallback sourcing. Existing multi-platform workflows and no-retry API behavior remain intact.
+- Added targeted tests for tone distinctions, preserving the pass, partial Gemini content and correctly labeling grounded description replacements.
+
 ### Known limitations
 
 - Template mode provides usable but less fluent prose than AI mode. It is not a trained language model.

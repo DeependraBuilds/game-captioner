@@ -62,6 +62,12 @@ YouTube receives its own **multi-paragraph video description**, rather than a Ti
 
 **Search optimization is not a ranking guarantee.** YouTube's own guidance prioritizes accurate, unique descriptions and relevant search terms. Hashtags are separate from the description and users can edit everything.
 
+## Concise racing storytelling and transparent field sourcing
+
+The racing fallback now tells one last-corner moment through six genuinely different creator voices while retaining the verified drift, overtake, and starting position. It avoids invented vehicle inputs and publication-facing notes about the input brief. YouTube output must contain a meaningful story, not repetitive explanations of the same sequence.
+
+For final-corner racing highlights, the generated YouTube description must retain the actions supplied (including an explicit overtake) and avoid generic "use this approach" coaching. A failing AI description is replaced with the grounded version without making another provider request. The output studio now distinguishes **Description: AI-written** from **Description: Grounded fallback**, even when Gemini supplied other usable fields and the overall mode is AI-assisted.
+
 ## Source-grounded racing content, not writing-process commentary
 
 For final-corner racing clips the deterministic fallback extracts whether the brief explicitly mentions a drift, the final turn, an overtake, starting in second place, proximity to the finish and an actual race win. All six tones receive three natural paragraphs about the gameplay without references to source notes, missing evidence or the generation process. An overtaking maneuver is not silently removed just because the model response is rejected. The system does not equate an overtake with a race victory.
