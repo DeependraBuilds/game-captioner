@@ -62,6 +62,12 @@ YouTube receives its own **multi-paragraph video description**, rather than a Ti
 
 **Search optimization is not a ranking guarantee.** YouTube's own guidance prioritizes accurate, unique descriptions and relevant search terms. Hashtags are separate from the description and users can edit everything.
 
+## Fallback storytelling and consequence checking
+
+A game-independent boss-moment fallback now preserves explicitly supplied dodge, survival and fight-completion facts instead of emitting generic copy about an unspecified "close encounter." It avoids inventing a victory, one-hit stakes or last-second timing. Casual racing copy uses a reaction to the observed position change rather than retelling the corner and pass in both paragraphs.
+
+Farming/building claims are also checked for unsupported operational results, changes to daily routines and specific planning durations. Those claims remain available when the original brief supports them. For AI-written copy, unsupported sentences can be removed; if the remaining description loses its structure, the two-paragraph grounded fallback is used.
+
 ## Cross-genre claim checks and creator-first writing
 
 The new shared editorial pass distinguishes highlights from tutorials. Highlights should describe the actual event and payoff rather than prescribing unsourced steps to viewers. Explicit tutorial briefs can still contain factual, relevant instruction.

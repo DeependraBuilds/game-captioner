@@ -19,7 +19,7 @@ test("non-shooter examples have distinct and grounded directions",()=>{
     ["The Sims 4","I set dinner on fire in the kitchen after trying to cook.","Dinner"],
     ["Forza Horizon 5","I held a drift through the last corner and passed the leader right before the finish.","race"],
     ["Stardew Valley","I finally completed the greenhouse and planted my first crop.","grind"],
-    ["Elden Ring","I dodged the final boss hit with barely any health and escaped.","mistake"],
+    ["Elden Ring","I dodged the final boss hit with barely any health and escaped.","boss"],
     ["Civilization VI","I negotiated trade with another city and avoided war.","fight"],
   ];
   for(const [game,description,expected] of cases){

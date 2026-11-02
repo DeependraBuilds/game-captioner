@@ -53,6 +53,10 @@
 - Expanded Gemini guidance to distinguish highlights from tutorials and six writing tones, and to avoid farming or management embellishments not present in the original creator notes.
 - Added a cross-genre project-completion fallback rather than another game-specific template, with regression coverage for Stardew Valley, Minecraft and correctly sourced mechanics.
 
+- Improved cross-genre boss-encounter fallbacks for explicit dodge/survival outcomes, replacing generic self-referential Hades copy and reducing repetition in Casual racing descriptions.
+- Added checks for unsupported downstream operational benefits, claimed routine changes and planning, using the submitted Stardew Cinematic output as regression input.
+- Added boss, farming and racing regression tests without changing the existing Gemini request count or production environment.
+
 ### Known limitations
 
 - Template mode provides usable but less fluent prose than AI mode. It is not a trained language model.

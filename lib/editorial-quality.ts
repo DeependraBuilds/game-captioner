@@ -45,6 +45,12 @@ export function editorialWarnings(text:string,b:Brief):string[]{
     for(const rule of farmingRules)
       if(rule.claim.test(text)&&!rule.source.test(original)) warnings.push(rule.reason);
   }
+  if(farmingContent(b)){
+    const originalLower=original.toLowerCase(),outputLower=text.toLowerCase();
+    if(/changes? (?:the |my |your )?(?:whole |daily |farming )?routine|transforms? (?:the |my |your )?(?:farming |daily )?routine/i.test(outputLower) && !/routine|daily schedule|daily habit|workflow/.test(originalLower)) warnings.push("unsupported routine change");
+    if(/operational greenhouse|greenhouse (?:is |was |became )?operational|fully operational/i.test(outputLower) && !/operational|functional|working greenhouse|producing/.test(originalLower)) warnings.push("unsupported operational outcome");
+    if(/(?:days?|weeks?|months?) of planning|careful planning/i.test(outputLower) && !/\bplan(?:ned|ning)?\b/.test(originalLower)) warnings.push("unsupported planning");
+  }
   // Do not convert a highlight/story into an unsolicited tutorial. Explicit
   // tutorial prompts can still contain properly grounded instructions.
   if(b.contentType==="highlight" || b.contentType==="story" || b.contentType==="montage"){

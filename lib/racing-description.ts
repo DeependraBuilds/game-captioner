@@ -44,7 +44,7 @@ export function racingDescription(b:Brief):string|null{
     ],
     casual:[
       "This "+game+" race came down to the final corner. I arrived "+entering+", held a drift through the turn, and "+pass+". It was the part of the race I wanted to share.",
-      "I like clips where one move makes the difference. Here it was the last-corner drift"+(f.passed?" followed by the pass near the finish":" right at the end")+". Nothing else needed to make that a good moment."+confirmedWin,
+      "The finish was already close, so seeing "+(f.passed?"the position change before the line":"that drift carry through the turn")+" is what made this one stand out to me. That is the moment I wanted to keep."+confirmedWin,
     ],
     cinematic:[
       "One last corner in "+game+". I went in "+entering+", held the drift through the turn, and "+pass+". The finish was already in sight.",
