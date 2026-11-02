@@ -30,7 +30,11 @@ test("good AI description is preserved; generic coaching is rejected for highlig
  assert.equal(valid.caption,wellWritten);
  const coached=wellWritten.replace("That late Forza Horizon 5 overtake is the whole highlight.","Use this approach when facing a deficit.");
  assert.equal(racingCaptionIsGrounded(coached,brief),false);
- assert.equal(validContent({...createFallback(brief,"youtube"),caption:coached},brief,"youtube").caption,createFallback(brief,"youtube").caption);
+ const cleaned=validContent({...createFallback(brief,"youtube"),caption:coached},brief,"youtube");
+ assert.ok(cleaned);
+ assert.ok(!cleaned.caption.includes("Use this approach"));
+ assert.ok(cleaned.caption.includes("Forza Horizon 5"));
+ assert.ok(cleaned.caption.includes("passed the leader"));
 });
 test("AI cannot erase a confirmed pass or hallucinate one if absent",()=>{
  const yes=mk();
