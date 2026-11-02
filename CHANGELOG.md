@@ -7,6 +7,8 @@
 - Added game/description/optional details, voiceover targets, CTA and carousel controls.
 - Replaced the plain game field with a searchable dropdown of 223 curated titles plus unrestricted custom entries, aliases and keyboard navigation.
 - Added per-platform captions, three hooks, restrained tags, voiceover and overlays.
+- Updated rule-based fallback to synthesize gameplay angles rather than echoing entire user descriptions, including multiple genres and a multi-round C4 example.
+- Reworked Gemini prompt to create actual editorial copy and enabled AI-assisted individual-section refinement when configured. Basic mode now identifies its limitations in the UI.
 - Added an editable, responsive dark workspace with original geometric GC logo, Pacific Blue and Blaze Orange.
 - Added copy controls, full-post copy, CSV and TSV export with spreadsheet-formula escaping.
 - Added individual section rewriting, shortening, natural/funny adjustments and removable CTAs.

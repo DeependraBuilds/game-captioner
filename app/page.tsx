@@ -111,7 +111,7 @@ export default function Home() {
       const data = await response.json() as GenerateResponse & { error?:string };
       if (!response.ok || !data.results) throw new Error(data.error || "Generation failed.");
       setDrafts(data.results);setActive(wanted[0]);setMode(data.mode);
-      setNotice(data.mode === "creative" ? "Creative draft ready. Review before posting." : "Template draft ready. Everything is editable.");
+      setNotice(data.mode === "creative" ? "AI-assisted creative draft ready. Review for accuracy before posting." : "Basic draft ready. This mode uses limited writing rules, not AI editorial rewriting.");
       setVariant(v => (v + 1) % 100);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not generate content.");
@@ -137,14 +137,14 @@ export default function Home() {
     try {
       const response = await fetch("/api/generate", {
         method:"POST",headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({...payload([p],(variant + 1)%100),section,adjustment}),
+        body:JSON.stringify({...payload([p],(variant + 1)%100),section,adjustment,existingText:Array.isArray(current[section])?current[section].join("\n"):current[section]}),
       });
       const data = await response.json() as GenerateResponse & {error?:string};
       if (!response.ok || !data.results?.[p]) throw new Error(data.error || "Couldn't revise that section.");
       const updated = data.results[p]!;
       setDrafts(prev => prev[p] ? {...prev,[p]:{...prev[p], [section]:updated[section]}} : prev);
       setVariant(v => (v+1)%100);
-      setNotice(sectionLabels[section] + " revised. You can still edit it.");
+      setNotice(sectionLabels[section] + (data.mode === "creative" ? " creatively rewritten." : " revised with basic rules. More natural rewrites require AI mode."));
     } catch (e) { setError(e instanceof Error ? e.message : "Couldn't revise that section."); }
     finally {setRefining("");}
   };
@@ -240,7 +240,7 @@ export default function Home() {
           </div> : <>
             <div className="results-toolbar">
               <div className="result-meta"><span className="live-dot"/>{selectedResults.length} platform draft{selectedResults.length===1?"":"s"}
-                <span className="mode-label">{mode==="creative"?"AI-assisted":"Template mode"}</span></div>
+                <span className="mode-label">{mode==="creative"?"AI-assisted":"Basic mode"}</span></div>
               <DownloadButtons drafts={drafts} game={game}/>
             </div>
             <div className="result-tabs" role="tablist" aria-label="Generated platforms">

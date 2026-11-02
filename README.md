@@ -43,7 +43,7 @@ CSV and tab-separated exports include platform, game, three titles, caption, has
 
 ## Optional Gemini integration
 
-The application works with a free, deterministic template fallback, which is deliberately limited in stylistic variety. The server supports **optional** Gemini 2.5 Flash-Lite for more flexible drafts.
+The application works in **Basic mode** without an API key. It now interprets common gameplay patterns (timing, doubles, clutch, racing, boss fights, building, farming and humor) and generates short angle-led copy instead of automatically repeating the full description. It is still a **rules-based fallback**, not a substitute for genuine language understanding. Novel or complex clips need creative AI drafting. The "Rewrite" buttons use the language model when enabled; otherwise they use basic rules. The server supports **optional** Gemini 2.5 Flash-Lite for more flexible drafts.
 
 Set these values **only** in server-side Vercel environment settings or a local `.env.local` (never commit a key):
 
@@ -53,6 +53,10 @@ GEMINI_API_KEY=<your-key>
 ```
 
 If disabled, rate limited, unreachable or invalid, template mode remains available. The public browser never receives the key. The app has best-effort per-instance limits (15 API calls/minute/IP, 3 AI requests/hour/IP, 30 AI requests/day/instance), request-size validation, a 12-second model timeout and no logs containing descriptions. **Vercel instances do not share those counters. They are not a global spending cap.** For public deployment, do not enable Gemini against a billable account without external provider-level quotas and billing safeguards. Free-tier availability, quotas and data-use terms depend on your Google account and may change. The hosted default is free template mode.
+
+## Editorial quality and testing
+
+The creative prompt asks the model to act as a gaming editor instead of a description paraphraser. It emphasizes the angle and payoff, grounded facts, platform differentiation and natural spoken voiceovers. Automated tests include a long real-world-style multi-round C4 example and non-shooter genres. No API key is bundled; AI quality requires a configured server-side Gemini key. Without it, the app clearly labels the results **Basic mode**.
 
 ## Privacy and limits
 
