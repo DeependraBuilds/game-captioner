@@ -1,6 +1,7 @@
 import type { Brief, Content, Platform } from "./gamecaptioner.ts";
 import { youtubeTitles } from "./youtube-titles.ts";
 import { basicYouTubeDescription } from "./youtube-description.ts";
+import { toneNarrative, toneTitle, toneVoice } from "./tone-guide.ts";
 
 type Angle = { hook: string; setup: string; payoff: string; overlay: string; extra?: string };
 function period(s:string):string { return /[.!?]$/.test(s) ? s : s + "."; }
@@ -87,13 +88,13 @@ function cut(s:string,length:number):string {
   return (i>length*.6?short.slice(0,i):short).replace(/[ ,:;]+$/,"")+"…";
 }
 export function writeBasicDraft(b:Brief,p:Platform,baseTags:string[]):Content {
-  const a=chooseAngle(b);
+  const a=toneNarrative(b,chooseAngle(b));
   const hooks=[a.hook.replace(/[.!?]+$/,"")+" | "+b.game,
     "The detail that changed this play", "What made this moment work"];
   if(b.tone==="funny"){hooks[1]="That definitely was not the plan";hooks[2]="Well, this escalated";}
   if(b.tone==="cinematic"){hooks[1]="Everything came down to this";hooks[2]="One moment. One decision.";}
   if(b.tone==="hype"){hooks[1]="Wait for the payoff";hooks[2]="The moment everything changed";}
-  const titles=p==="youtube" ? youtubeTitles(b,a) : [0,1,2].map((_,i)=>cut(hooks[(i+b.variant)%3],110));
+  const titles=p==="youtube" ? youtubeTitles(b,a).map((title,i)=>toneTitle(title,b,i)) : [0,1,2].map((_,i)=>cut(hooks[(i+b.variant)%3],110));
   const first=b.variant%3===0?a.hook:b.variant%3===1?a.payoff:a.setup;
   const ending=b.variant%3===0?a.payoff:b.variant%3===1?a.hook:a.payoff;
   const middle=[a.setup,a.extra].filter(Boolean).join(" ");
@@ -105,8 +106,8 @@ export function writeBasicDraft(b:Brief,p:Platform,baseTags:string[]):Content {
     twitter:cut(b.game+": "+first+" "+ending,210),
   };
   // Target is approximate. Do not invent facts or pad scripts to fill 30 seconds.
-  const voiceOrder=b.variant%3===0?[a.hook,a.setup,a.extra,a.payoff]:
-    b.variant%3===1?[a.setup,a.hook,a.extra,a.payoff]:[a.payoff,a.setup,a.extra,a.hook];
+  const ordered=toneVoice(b,a);
+  const voiceOrder=b.variant%3===0?ordered:b.variant%3===1?[ordered[1],ordered[0],...ordered.slice(2)]:[...ordered.slice(1),ordered[0]];
   const voiceLines=voiceOrder.filter((s):s is string=>Boolean(s));
   const voiceMax=Math.round(b.duration*2.4);
   const vo:string[]=[];let words=0;
