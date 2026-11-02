@@ -53,8 +53,8 @@ export function youtubeTitles(b: Brief, angle: EditorialAngle): [string,string,s
       : "I Survived This Boss Encounter";
     curiosity=oneHit?"One Hit Away from Losing This Boss Fight":
       low?"Barely Any Health Left Against the Boss":"This Boss Fight Came Down to One Move";
-    skill=dodge&&escaped?"The Dodge That Let Me Escape the Boss":
-      dodge&&defeated?"The Dodge Before I Finished the Boss":
+    skill=dodge&&defeated?"The Dodge Before I Finished the Boss":
+      dodge&&escaped?"The Dodge That Let Me Escape the Boss":
       dodge?"The Boss Dodge That Made the Difference":"I Made It Through the Boss Encounter";
   } else if(has(/\b(?:fire|flames|burning|burned)\b/) && has(/\b(?:kitchen|cooking|dinner)\b/)) {
     searchable=alt?"Dinner Was a Disaster in the Kitchen":"I Tried Cooking Dinner. The Kitchen Caught Fire";
