@@ -62,6 +62,14 @@ YouTube receives its own **multi-paragraph video description**, rather than a Ti
 
 **Search optimization is not a ranking guarantee.** YouTube's own guidance prioritizes accurate, unique descriptions and relevant search terms. Hashtags are separate from the description and users can edit everything.
 
+## Cross-genre claim checks and creator-first writing
+
+The new shared editorial pass distinguishes highlights from tutorials. Highlights should describe the actual event and payoff rather than prescribing unsourced steps to viewers. Explicit tutorial briefs can still contain factual, relevant instruction.
+
+For farming, building and management-type briefs, concrete crop-tile, planting-zone, planting/harvesting, structure-moving, land-clearing, and productivity claims are accepted only when their concepts appear in the creator's source notes. These are limited rule checks, not a guarantee of semantic truth. Other existing safeguards cover racing, combat and language consistency. Unsupported sentences are removed, and a description that no longer meets the quality threshold uses a grounded fallback without a second AI call.
+
+A game-independent project-completion fallback now handles long periods of work followed by a finished goal, such as a season of rearranging a farm before completing a greenhouse or a week organizing a base before finishing storage. It writes in the chosen tone without inventing game mechanics, and avoids implying that every highlight is a tutorial.
+
 ## Description length scales with the gameplay facts
 
 Short gameplay notes usually offer only a setup, an action and a payoff. GameCaptioner now accepts two substantive YouTube paragraphs for such clips instead of padding the description into three repetitive paragraphs. Longer briefs, with at least 45 words of source detail, retain the three-paragraph, 65-word minimum. This is a writing-quality decision, not a claim that description length guarantees search placement. Both AI-written and grounded copy must still pass factual and game-specific validation.

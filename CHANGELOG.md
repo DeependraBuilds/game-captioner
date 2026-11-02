@@ -49,6 +49,10 @@
 - Adopted adaptive YouTube description length: two substantive paragraphs for short creator briefs, three for detailed briefs. Reduced repetitive filler in six racing-tone fallback descriptions and allowed grounded, concise AI descriptions to pass without unnecessary fallback.
 - Added tests for short/detailed description gates, all six racing-tone outputs, and one-line AI text rejection.
 
+- Added shared editorial-quality checks for unsupported gaming actions, placement mechanics, farming/management claims, time or efficiency benefits, and unsolicited how-to advice in highlight/story/montage output.
+- Expanded Gemini guidance to distinguish highlights from tutorials and six writing tones, and to avoid farming or management embellishments not present in the original creator notes.
+- Added a cross-genre project-completion fallback rather than another game-specific template, with regression coverage for Stardew Valley, Minecraft and correctly sourced mechanics.
+
 ### Known limitations
 
 - Template mode provides usable but less fluent prose than AI mode. It is not a trained language model.

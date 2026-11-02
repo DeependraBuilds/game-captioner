@@ -3,6 +3,7 @@ import { adequateYouTubeDescription, hasUnexpectedEastAsianScript } from "./yout
 import { relevantHashtags } from "./hashtag-strategy.ts";
 import { unsupportedClaims, groundedSentences } from "./grounding.ts";
 import { racingCaptionIsGrounded } from "./racing-description.ts";
+import { editorialWarnings, preserveGroundedParagraphs } from "./editorial-quality.ts";
 
 export const PLATFORMS = ["youtube", "tiktok", "instagram", "facebook", "twitter"] as const;
 export type Platform = (typeof PLATFORMS)[number];
@@ -114,10 +115,10 @@ export function validContent(value: unknown, b: Brief, p: Platform): Content | n
   const unsafeVoiceover=(text:string):boolean =>
     /\b(?:like and subscribe|subscribe to (?:my|the|this) channel|follow (?:for|me for) more|check out (?:my|the) channel)\b/i.test(text);
   const safeField=(value:string, fallback:string, kind:"general"|"voiceover"="general"):string =>
-    hasUnexpectedEastAsianScript(value,b) || unsupportedClaims(value,b).length ||
+    hasUnexpectedEastAsianScript(value,b) || unsupportedClaims(value,b).length || editorialWarnings(value,b).length ||
       (kind==="voiceover" && unsafeVoiceover(value)) ? fallback : value.trim();
   const checkedTitles = titles.map((title,index) => safeField(title,backup.titles[index]));
-  let cleanedCaption=hasUnexpectedEastAsianScript(caption,b)?backup.caption:groundedSentences(caption,b);
+  let cleanedCaption=hasUnexpectedEastAsianScript(caption,b)?backup.caption:preserveGroundedParagraphs(groundedSentences(caption,b),b);
   // Light de-jargon pass. Do not invent information or flatten the chosen tone.
   cleanedCaption=cleanedCaption.replace(/\butilizing\b/gi,"using")
     .replace(/\babsolute precision\b/gi,"careful timing")

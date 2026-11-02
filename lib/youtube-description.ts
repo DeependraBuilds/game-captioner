@@ -1,5 +1,6 @@
 import type { Brief } from "./gamecaptioner.ts";
 import { racingDescription } from "./racing-description.ts";
+import { completedProjectDescription } from "./progress-description.ts";
 
 type EditorialAngle = { hook:string; setup:string; payoff:string; extra?:string };
 const words = (text:string) => text.trim().split(/\s+/).filter(Boolean).length;
@@ -79,6 +80,8 @@ export function basicYouTubeDescription(b:Brief,a:EditorialAngle):string {
   }
   const racing=racingDescription(b);
   if(racing)return racing;
+  const project=completedProjectDescription(b);
+  if(project)return project;
   const intro=b.game+" "+b.contentType+" gameplay: "+finalSentence(cap(a.hook))
     +" This clip focuses on "+(has(/\bboss\b/)?"a close boss encounter."
       :has(/\b(?:drift|corner|racing|overtak)\b/)?"the critical racing moment."
