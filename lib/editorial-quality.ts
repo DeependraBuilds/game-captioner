@@ -22,12 +22,11 @@ const farmingRules:ClaimEvidence[]=[
    source:/\b(?:productivity|efficiency|output|profit|production|yield|returns?|maximiz|optimiz)\w*\b/i,reason:"unsupported efficiency benefit"},
   {claim:/\b(?:without wasting(?: valuable)? in.game days|saves? (?:time|days?)|daily crop management)\b/i,
    source:/\b(?:wast\w*|sav\w*|days?|daily|time)\b/i,reason:"unsupported time optimization"},
-];
-
   {claim:/\b(?:efficient|optimized|optimal)\s+(?:operational\s+|farm\s+|greenhouse\s+|spatial\s+)?(?:layout|setup|design|organization)\b/i,
    source:/\b(?:efficien\w*|optimi\w*|productiv\w*)\b/i,reason:"unsupported efficiency benefit"},
   {claim:/\b(?:clearing\s+and\s+repositioning|reorganizing\s+structures?|repositioning\s+structures?)\b/i,
    source:/\b(?:clear\w*|structures?|buildings?|reposition\w*)\b/i,reason:"unsupported structure changes"},
+];
 const instructionRules:RegExp[]=[
   /\b(?:take the time to|make sure (?:you|to)|be sure to|start by|learn to|you should|you need to|remember to)\b/i,
   /\b(?:use this approach|apply (?:this|the same) (?:approach|technique)|try (?:this|the same) (?:setup|method|technique)|use these (?:tips|steps|methods))\b/i,

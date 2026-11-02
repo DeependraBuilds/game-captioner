@@ -20,7 +20,7 @@ export function completedProjectDescription(b:Brief):string|null {
     ],
     funny:[
       "Apparently I made "+effortAction+" my full-"+period+" side quest in "+game+". The reward? A completed "+project+".",
-      "That's a lot of work for one completed project. At least there is finally something to show for a full "+period+" of effort."",
+      "That's a lot of work for one completed project. At least there is finally something to show for a full "+period+" of effort.",
     ],
     competitive:[
       "In "+game+", I spent a whole "+period+" "+effortAction+" before completing the "+project+". The goal was the finished setup.",
@@ -28,7 +28,7 @@ export function completedProjectDescription(b:Brief):string|null {
     ],
     tactical:[
       "In "+game+", I spent a whole "+period+" "+effortAction+" and finally completed the "+project+". This clip captures the result of that work.",
-      "The work happened over the "+period+", with the completion coming after all those changes. The finished "+project+" is the result I wanted to capture."",
+      "The work happened over the "+period+", with the completion coming after all those changes. The finished "+project+" is the result I wanted to capture.",
     ],
     casual:[
       "I spent the whole "+period+" "+effortAction+" in "+game+", and the "+project+" is finally done. That was a longer project than one quick session.",
