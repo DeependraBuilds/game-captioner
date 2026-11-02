@@ -57,7 +57,7 @@ export function racingDescription(b:Brief):string|null{
   ],
   cinematic:[
    "One corner remained in "+game+". I "+action+" and "+outcome+".",
-   "The last turn arrived"+second+". I held the drift through the turn"+(f.passed?", then moved past "+opponent":".")+" That short sequence became the defining moment.",
+   "The last turn arrived"+second+". I held the drift through the turn"+(f.passed?", then moved past "+opponent:".")+" That short sequence became the defining moment.",
    "The "+turn+" gave this "+game+" race its payoff: "+(f.passed?"an overtake near the finish":"a committed drift through the turn")+". "+victory,
   ],
  } satisfies Record<Brief["tone"],[string,string,string]>;
