@@ -6,7 +6,7 @@ test("API rejects unsupported input and accepts TikTok", async () => {
     method:"POST", headers:{ "content-type":"application/json", origin:"https://example.com" },
     body:JSON.stringify(data),
   });
-  const linked = await respond(req({game:"Hades",description:"I escaped the final room after dodging a boss.",platform:"linkedin"}),false);
+  const linked = await respond(req({game:"Hades",description:"I escaped the final room after dodging a boss.",platform:"unsupported"}),false);
   assert.equal(linked.status,400);
   const tik = await respond(req({game:"Hades",description:"I escaped the final room after dodging a boss.",platform:"tiktok"}),false);
   assert.equal(tik.status,200);

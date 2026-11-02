@@ -11,6 +11,7 @@
 - Added individual section rewriting, shortening, natural/funny adjustments and removable CTAs.
 - Added request validation, bounded request sizes, same-origin checks, rate limiting and no-store responses.
 - Added opt-in server-side Gemini 2.5 Flash-Lite with 12-second timeout and fallback. Disabled unless configured by the site owner.
+- Updated Next.js to 16.4.3 to address October 2026 critical security advisories.
 - Added regression tests for five platforms, genre variation, input rejection and character constraints.
 
 ### Known limitations
