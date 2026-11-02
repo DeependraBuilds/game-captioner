@@ -62,6 +62,13 @@ YouTube receives its own **multi-paragraph video description**, rather than a Ti
 
 **Search optimization is not a ranking guarantee.** YouTube's own guidance prioritizes accurate, unique descriptions and relevant search terms. Hashtags are separate from the description and users can edit everything.
 
+## Cross-platform package integrity
+
+GameCaptioner now checks the whole editable draft, not just YouTube descriptions. A caption containing only the same hashtags already supplied separately is treated as missing copy and replaced with grounded text. Trailing duplicate hashtag tokens are removed from copy-ready posts and CSV/TSV caption cells, while the independent hashtag field remains intact. The eleven-column CSV export schema is unchanged.
+
+For source notes that explicitly mention a boss dodge and escape, Basic-mode platform captions and spoken voiceovers include those events rather than generic comments about a close call. Racing briefs similarly preserve verified final-corner drifts and passes. Short overlay sequences use three distinct factual beats. When requested, a carousel falls back to a distinct factual outline if generated slides repeat each other. AI voiceovers that omit a clearly stated boss dodge/escape or racing drift/overtake are replaced with the grounded script. A shared voiceover across platforms remains intentional when the same video will be posted everywhere.
+
+These checks are intentionally bounded and do not independently verify a gameplay video. All fields remain editable, and there are no extra API calls. 
 ## Fallback storytelling and consequence checking
 
 A game-independent boss-moment fallback now preserves explicitly supplied dodge, survival and fight-completion facts instead of emitting generic copy about an unspecified "close encounter." It avoids inventing a victory, one-hit stakes or last-second timing. Casual racing copy uses a reaction to the observed position change rather than retelling the corner and pass in both paragraphs.

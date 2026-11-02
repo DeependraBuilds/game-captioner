@@ -4,6 +4,7 @@ import { relevantHashtags } from "./hashtag-strategy.ts";
 import { unsupportedClaims, groundedSentences } from "./grounding.ts";
 import { racingCaptionIsGrounded } from "./racing-description.ts";
 import { editorialWarnings, preserveGroundedParagraphs } from "./editorial-quality.ts";
+import { voiceoverHasKeyAction } from "./moment-beats.ts";
 
 export const PLATFORMS = ["youtube", "tiktok", "instagram", "facebook", "twitter"] as const;
 export type Platform = (typeof PLATFORMS)[number];
@@ -86,8 +87,16 @@ export function hashtagsFor(brief: Brief, platform: Platform): string[] {
 export function createFallback(b:Brief,p:Platform):Content {
   return writeBasicDraft(b,p,hashtagsFor(b,p));
 }
+export function captionWithoutDuplicateTags(caption:string,hashtags:string[]):string {
+  const tags=hashtags.filter(tag=>/^#[A-Za-z0-9_]+$/.test(tag));
+  if(!tags.length)return caption.trim();
+  // Hashtag tokens have a safe restricted alphabet, so no regex escaping is required.
+  const trailing=new RegExp("(?:\\s*(?:"+tags.join("|")+"))+\\s*$","i");
+  return caption.trim().replace(trailing,"").trim();
+}
 export function publishText(content: Content): string {
-  return [content.caption.trim(), content.hashtags.join(" ")].filter(Boolean).join("\n\n");
+  return [captionWithoutDuplicateTags(content.caption,content.hashtags), content.hashtags.join(" ")]
+    .filter(Boolean).join("\n\n");
 }
 export function validContent(value: unknown, b: Brief, p: Platform): Content | null {
   if (!object(value)) return null;
@@ -117,8 +126,13 @@ export function validContent(value: unknown, b: Brief, p: Platform): Content | n
   const safeField=(value:string, fallback:string, kind:"general"|"voiceover"="general"):string =>
     hasUnexpectedEastAsianScript(value,b) || unsupportedClaims(value,b).length || editorialWarnings(value,b).length ||
       (kind==="voiceover" && unsafeVoiceover(value)) ? fallback : value.trim();
-  const checkedTitles = titles.map((title,index) => safeField(title,backup.titles[index]));
-  let cleanedCaption=hasUnexpectedEastAsianScript(caption,b)?backup.caption:preserveGroundedParagraphs(groundedSentences(caption,b),b);
+  const checkedTitles = titles.map((title,index) =>
+    /^The Read Behind (?:One|The|This)\b.*\b(?:Saved|Changed|Won)\b/i.test(title)
+      ? backup.titles[index] : safeField(title,backup.titles[index]));
+  const withoutTags=captionWithoutDuplicateTags(caption,cleanTags);
+  let cleanedCaption=hasUnexpectedEastAsianScript(withoutTags,b)?backup.caption:
+    preserveGroundedParagraphs(groundedSentences(withoutTags,b),b);
+  if(!cleanedCaption.trim())cleanedCaption=backup.caption;
   // Light de-jargon pass. Do not invent information or flatten the chosen tone.
   cleanedCaption=cleanedCaption.replace(/\butilizing\b/gi,"using")
     .replace(/\babsolute precision\b/gi,"careful timing")
@@ -129,14 +143,21 @@ export function validContent(value: unknown, b: Brief, p: Platform): Content | n
   const checkedCaption = p === "youtube"
     ? (adequateYouTubeDescription(cleanedCaption,b) && racingCaptionIsGrounded(cleanedCaption,b) ? cleanedCaption : backup.caption)
     : (cleanedCaption.trim() || backup.caption);
+  const safeOverlays=onscreen.map((line,i)=>clip(safeField(line,backup.onscreen[i]||""),45));
+  const groundedOverlays=voiceoverHasKeyAction(safeOverlays.join(" "),b)
+    ? safeOverlays : backup.onscreen;
+  const cleanCarousel=carousel.map((line,i)=>safeField(line,backup.carousel[i]||""));
+  const carouselIdeas=cleanCarousel.map(line=>line.replace(/^[^:]{1,30}:\s*/,"").trim().toLowerCase());
+  const distinctCarousel=carouselIdeas.filter(Boolean).length>=3 &&
+    new Set(carouselIdeas.filter(Boolean)).size===carouselIdeas.filter(Boolean).length;
   const prepared: Content = {
     titles: checkedTitles.map(t => clip(t.trim(), p === "youtube" ? 100 : 110)),
     caption: checkedCaption,
     hashtags: cleanTags.length ? cleanTags : hashtagsFor(b, p),
-    voiceover: safeField(voiceover,backup.voiceover,"voiceover"),
-    onscreen: onscreen.map((line,i) => clip(safeField(line,backup.onscreen[i]||""),45)),
+    voiceover: voiceoverHasKeyAction(voiceover,b) ? safeField(voiceover,backup.voiceover,"voiceover") : backup.voiceover,
+    onscreen:groundedOverlays,
     cta: b.includeCTA ? safeField(cta,backup.cta) : "",
-    carousel: b.includeCarousel ? carousel.map((line,i) => safeField(line,backup.carousel[i]||"")) : [],
+    carousel: b.includeCarousel ? (distinctCarousel?cleanCarousel:backup.carousel) : [],
   };
   if (p === "twitter" && publishText(prepared).length > 280) {
     prepared.caption = clip(prepared.caption, 280 - prepared.hashtags.join(" ").length - 2);

@@ -2,6 +2,7 @@ import type { Brief, Content, Platform } from "./gamecaptioner.ts";
 import { youtubeTitles } from "./youtube-titles.ts";
 import { basicYouTubeDescription } from "./youtube-description.ts";
 import { toneNarrative, toneTitle, toneVoice } from "./tone-guide.ts";
+import { momentBeats } from "./moment-beats.ts";
 
 type Angle = { hook: string; setup: string; payoff: string; overlay: string; extra?: string };
 function period(s:string):string { return /[.!?]$/.test(s) ? s : s + "."; }
@@ -36,13 +37,18 @@ function chooseAngle(b:Brief):Angle {
     payoff:has(/\b(?:overtak|pass(?:ed)? the leader)\b/)?"That last move took the lead.":"The finish made every second count.",
     overlay:"FINAL CORNER",
   };
-  if(has(/\bboss\b/) && has(/\b(?:dodg|surviv|one hit|1 hp|barely any health|low health)\b/)) return {
-    hook:"One mistake away from losing the run.",
-    setup:"The boss fight hinged on a last-second decision.",
-    payoff:has(/\b(?:escape|finish|defeat|won)\b/)?"Surviving opened the chance to finish it.":"That close call was the moment worth saving.",
-    overlay:"ONE MORE DODGE",
-  };
-  if(has(/\b(?:fire|flames|burning|burned)\b/) && has(/\b(?:kitchen|cooking|dinner)\b/)) return {
+  if(has(/\bboss\b/) && has(/\b(?:dodg\w*|surviv\w*|escap\w*|one hit|1 hp|barely any health|low health)\b/)) {
+    const dodge=has(/\b(?:dodg\w*|evad\w*|avoided)\b/);
+    const escaped=has(/\b(?:escap\w*|surviv\w*|made it out)\b/);
+    const low=has(/\b(?:barely any health|low health|1 hp|one hp|almost no health)\b/);
+    return {
+      hook:low?"Barely any health left against the boss.":"The boss fight came down to one move.",
+      setup:dodge?"I dodged the boss attack.":"I made it through the boss encounter.",
+      payoff:escaped?"I escaped the encounter.":"The dodge was the moment that mattered.",
+      overlay:"BOSS DODGE",
+    };
+  }
+    if(has(/\b(?:fire|flames|burning|burned)\b/) && has(/\b(?:kitchen|cooking|dinner)\b/)) return {
     hook:"Dinner went completely off-script.",setup:"What started as cooking turned into chaos.",
     payoff:"The kitchen had other plans.",overlay:"DINNER DISASTER",
   };
@@ -98,6 +104,14 @@ export function writeBasicDraft(b:Brief,p:Platform,baseTags:string[]):Content {
   const first=b.variant%3===0?a.hook:b.variant%3===1?a.payoff:a.setup;
   const ending=b.variant%3===0?a.payoff:b.variant%3===1?a.hook:a.payoff;
   const middle=[a.setup,a.extra].filter(Boolean).join(" ");
+  const source=b.description+" "+b.notable;
+  const bossClip=/\bboss\b/i.test(source) && /\b(?:dodg\w*|evad\w*|escap\w*|surviv\w*)\b/i.test(source);
+  const bossLow=/\b(?:barely any health|low health|1 hp|one hp|almost no health)\b/i.test(source);
+  const bossDodge=/\b(?:dodg\w*|evad\w*|avoided)\b/i.test(source);
+  const bossEscape=/\b(?:escap\w*|surviv\w*|made it out)\b/i.test(source);
+  const bossScene=(bossLow?"Barely any health left against the boss. ":"")+
+    (bossDodge?"I dodged the boss attack. ":"I made it through the encounter. ")+
+    (bossEscape?"I escaped.":"");
   const captions:Record<Platform,string>={
     youtube:basicYouTubeDescription(b,a),
     tiktok:first+" "+(b.variant%3===0?a.payoff:a.setup)+"\n"+b.game+".",
@@ -105,9 +119,16 @@ export function writeBasicDraft(b:Brief,p:Platform,baseTags:string[]):Content {
     facebook:"A "+b.game+" moment that stood out: "+first+"\n\n"+a.setup+" "+ending,
     twitter:cut(b.game+": "+first+" "+ending,210),
   };
+  if(bossClip){
+    captions.tiktok=(bossScene+" "+b.game+".").trim();
+    captions.instagram=(bossScene+"\n\n"+b.game+".").trim();
+    captions.facebook=(b.game+" boss fight: "+bossScene).trim();
+    captions.twitter=cut(b.game+": "+bossScene,210);
+  }
   // Target is approximate. Do not invent facts or pad scripts to fill 30 seconds.
   const ordered=toneVoice(b,a);
   const voiceOrder=b.variant%3===0?ordered:b.variant%3===1?[ordered[1],ordered[0],...ordered.slice(2)]:[...ordered.slice(1),ordered[0]];
+  const special=momentBeats(b);
   const voiceLines=voiceOrder.filter((s):s is string=>Boolean(s));
   const voiceMax=Math.round(b.duration*2.4);
   const vo:string[]=[];let words=0;
@@ -118,14 +139,14 @@ export function writeBasicDraft(b:Brief,p:Platform,baseTags:string[]):Content {
     hype:"More "+b.game+" moments? Check out the channel.",
     funny:"More "+b.game+" moments like this? Stick around.",
     competitive:"Follow for more "+b.game+" decisions and highlights.",
-    tactical:"More "+b.game+" reads and gameplay on the channel.",
+    tactical:"More "+b.game+" gameplay on the channel.",
     casual:"More "+b.game+" clips on the channel.",
     cinematic:"More "+b.game+" stories on the channel.",
   };
   return {
     titles,caption:captions[p],hashtags:baseTags,
-    voiceover:vo.join(" "),onscreen:[titleOnScreen,a.overlay,cut(a.payoff,45)],
+    voiceover:special?.voiceover||vo.join(" "),onscreen:special?.onscreen||[titleOnScreen,a.overlay,cut(a.payoff,45)],
     cta:!b.includeCTA?"":p==="twitter"?"Follow for more "+b.game+".":ctaByTone[b.tone],
-    carousel,
+    carousel:b.includeCarousel?(special?.carousel||carousel):[],
   };
 }

@@ -57,6 +57,10 @@
 - Added checks for unsupported downstream operational benefits, claimed routine changes and planning, using the submitted Stardew Cinematic output as regression input.
 - Added boss, farming and racing regression tests without changing the existing Gemini request count or production environment.
 
+- Reviewed three real full-package CSV exports covering YouTube Shorts, TikTok, Instagram, Facebook and X. Added caption normalization for X hashtags-only drafts and duplicate hashtags embedded in captions, including CSV/TSV export and copy-ready output without altering the eleven-column schema.
+- Added source-driven boss and racing voiceovers, short overlays, and distinct carousel beats. Replaced generic boss social captions and malformed tactical title prefixes. Validates that AI voiceovers mention explicit key gameplay actions.
+- Added tests for all five platform exports, X post integrity, Hades action-based voiceovers/overlays, distinct carousels and unsupported podium or full-race claims.
+
 ### Known limitations
 
 - Template mode provides usable but less fluent prose than AI mode. It is not a trained language model.

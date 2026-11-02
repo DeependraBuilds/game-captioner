@@ -71,11 +71,11 @@ export function toneTitle(title:string,b:Brief,index:number):string {
   if(b.tone==="casual" || index!==0) return title;
   const prefixes:Record<Exclude<Tone,"casual">,string>={
     hype:"The Payoff: ",funny:"So This Happened: ",competitive:"The Execution: ",
-    tactical:"The Read Behind ",cinematic:"The Decisive Moment: ",
+    tactical:"How ",cinematic:"The Decisive Moment: ",
   };
   const lead=prefixes[b.tone];
   const [body,game]=title.split(/\s+\|\s+(?=[^|]+$)/);
-  if(!game || title.length+lead.length>100) return title;
+  if(!game || /^how\b/i.test(body) && b.tone==="tactical" || title.length+lead.length>100) return title;
   return lead+body+" | "+game;
 }
 

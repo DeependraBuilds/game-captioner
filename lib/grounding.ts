@@ -32,6 +32,11 @@ const sharedRules:ClaimRule[]=[
  {output:/\b(?:without (?:ever )?exposing (?:myself|yourself)|without (?:a )?(?:direct )?gunfight)\b/i,evidence:/\b(?:without exposing|without (?:a )?gunfight|no gunfight|never saw)\b/i,label:"unseen engagement"},
 ];
 const racingRules:ClaimRule[]=[
+ {output:/\b(?:podium|podium finish|podium spot)\b/i,
+  evidence:/\bpodium\b/i,label:"unsupported podium outcome"},
+ {output:/\b(?:the|my|your|an?)\s+(?:whole|entire)\s+race\s+(?:in|at|from|staying|sitting)\s+(?:second|2nd)\b|\b(?:in|at)\s+(?:second|2nd)\s+(?:place\s+)?(?:for|throughout)\s+(?:the\s+)?(?:whole|entire)\s+race\b/i,
+  evidence:/\b(?:whole|entire)\s+race\b|\bthroughout (?:the )?race\b/i,label:"unsupported full-race position"},
+
  {output:/\b(?:brak(?:e|es|ed|ing)\s+(?:zone|point|late)|under braking|braking zone|brake pressure)\b/i,evidence:/\bbrak\w*\b/i,label:"braking technique"},
  {output:/\b(?:track(?:ed|ing)?\s+(?:tightly|closely)\s+(?:around|behind|alongside)|stayed\s+(?:tight|close)\s+(?:to|around)|around\s+the\s+(?:opponent|rival|leader))\b/i,evidence:/\b(?:tracked|tracking|around|alongside|close to|side.by.side)\b/i,label:"opponent tracking"},
  {output:/\b(?:smooth|perfect|clean|ideal|optimal|risky|dangerous|aggressive)\s+(?:drift|slide|corner|line|entry|exit)\b/i,evidence:/\b(?:smooth|perfect|clean|ideal|optimal|risky|dangerous|aggressive)\b/i,label:"unverified driving quality"},

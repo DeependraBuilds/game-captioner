@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { GameSelector } from "@/components/game-selector";
 import {
-  PLATFORMS, PLATFORM_NAMES, TONES, CONTENT_TYPES, publishText,
+  PLATFORMS, PLATFORM_NAMES, TONES, CONTENT_TYPES, publishText, captionWithoutDuplicateTags,
   type Platform, type Content, type Section, type Adjustment,
   type GenerateResponse, type Tone, type ContentType,
 } from "@/lib/gamecaptioner";
@@ -48,7 +48,7 @@ function buildExport(drafts: Drafts, game: string, separator: "," | "\t"): strin
     if (!item) continue;
     rows.push([
       PLATFORM_NAMES[platform], game, ...[0,1,2].map(i => item.titles[i] || ""),
-      item.caption, item.hashtags.join(" "), item.voiceover,
+      captionWithoutDuplicateTags(item.caption,item.hashtags), item.hashtags.join(" "), item.voiceover,
       item.onscreen.join(" | "), item.cta, item.carousel.join(" | "),
     ]);
   }
