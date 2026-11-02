@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 import {
   PLATFORMS, PLATFORM_NAMES, TONES, CONTENT_TYPES, publishText,
@@ -149,10 +150,10 @@ export default function Home() {
   return <div className="app-shell">
     <header className="site-header">
       <div className="site-header-inner">
-        <a className="brand" href="/" aria-label="GameCaptioner home">
+        <Link className="brand" href="/" aria-label="GameCaptioner home">
           <Image src="/gamecaptioner-mark.svg" width={44} height={44} alt="" priority />
           <span>Game<span className="brand-accent">Captioner</span><small>CREATOR WORKSPACE</small></span>
-        </a>
+        </Link>
         <div className="header-right">
           <span className="header-pill"><span className="live-dot" /> Free-first · No account</span>
           <a href="https://github.com/DeependraBuilds/game-captioner" target="_blank" rel="noreferrer" className="header-link">View on GitHub ↗</a>
